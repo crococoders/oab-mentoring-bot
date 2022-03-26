@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   node:
@@ -12,7 +12,7 @@ services:
       - .:/usr/app
     depends_on:
       - postgres
-  
+
   postgres:
     container_name: database
     image: postgres:12
@@ -22,6 +22,6 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_DB: "oab_mentoring_bot"
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: 'oab_mentoring_bot'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: 'admin'
