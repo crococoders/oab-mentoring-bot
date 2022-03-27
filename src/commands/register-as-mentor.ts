@@ -1,8 +1,9 @@
 import { Scenes } from 'telegraf';
+import { specializationStep } from '../steps/specialization';
 import {
-  stepAfterSpecialization,
-  specializationStep,
-} from '../steps/specialization';
+  yearsOfExperienceStep,
+  validateYearsOfExperience,
+} from '../steps/years-of-experience';
 
 const registerAsMentor = new Scenes.WizardScene(
   'register-as-mentor',
@@ -15,13 +16,16 @@ const registerAsMentor = new Scenes.WizardScene(
     return ctx.wizard.next();
   },
   specializationStep,
-
-  stepAfterSpecialization(
-    'Какой у тебя опыт работы в выбранной професси? (в годах)\n\nЕсли у тебя нет опыта работы в этой профессии, напиши “0”. Пожалуйста, укажи целое число (округляй до ближайшего целого).',
-  ),
+  yearsOfExperienceStep,
   async (ctx) => {
-    await ctx.reply('Спасибо за регистрацию!');
-    return ctx.scene.leave();
+    if (!validateYearsOfExperience(ctx)) {
+      await ctx.reply(
+        'Неверный формат, пожалуйста, введи число. \n\nЕсли у тебя нет опыта работы в этой профессии, напиши "0". ',
+      );
+    } else {
+      await ctx.reply('Спасибо за регистрацию!');
+      return ctx.scene.leave();
+    }
   },
 );
 

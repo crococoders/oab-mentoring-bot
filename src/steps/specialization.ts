@@ -1,10 +1,19 @@
-import { Composer, Markup, Scenes } from 'telegraf';
+import { Markup, Scenes } from 'telegraf';
 
-const specializations = Markup.keyboard([
-  Markup.button.callback('Backend разработка', 'backend'),
-  Markup.button.callback('Frontend разработка', 'frontend'),
-  Markup.button.callback('Мобильная разработка', 'mobile'),
-]).oneTime();
+const specializations = Markup.inlineKeyboard(
+  [
+    Markup.button.callback('Backend разработка', 'backend'),
+    Markup.button.callback('Frontend разработка', 'frontend'),
+    Markup.button.callback('Мобильная разработка', 'mobile'),
+    Markup.button.callback('QA / Тестирование', 'qa'),
+    Markup.button.callback('Data Science', 'ds'),
+    Markup.button.callback('UX / UI Дизайн', 'design'),
+    Markup.button.callback('Product / Project Менеджмент', 'pm'),
+  ],
+  {
+    wrap: () => true,
+  },
+);
 
 const specializationStep = async (ctx: Scenes.WizardContext) => {
   await ctx.reply(
@@ -14,22 +23,4 @@ const specializationStep = async (ctx: Scenes.WizardContext) => {
   return ctx.wizard.next();
 };
 
-const stepAfterSpecialization = (question: string) => {
-  const step = new Composer<Scenes.WizardContext>();
-
-  step.hears(
-    /(Backend разработка|Frontend разработка|Мобильная разработка)/,
-    async (ctx) => {
-      await ctx.reply(question);
-      return ctx.wizard.next();
-    },
-  );
-
-  step.use((ctx) =>
-    ctx.replyWithMarkdown('Выбери одно из направлений нажав кнопку.'),
-  );
-
-  return step;
-};
-
-export { specializationStep, stepAfterSpecialization };
+export { specializationStep };
