@@ -1,4 +1,6 @@
 import { Composer, Markup, Scenes, session, Telegraf } from 'telegraf';
+import findMentor from './commands/find-mentor';
+import registerAsMentor from './commands/register-as-mentor';
 require('dotenv').config();
 
 const token = process.env.TELEGRAM_BOT_ACCESS_TOKEN;
@@ -7,64 +9,15 @@ if (token === undefined) {
   throw new Error('BOT_TOKEN must be provided!');
 }
 
-const bot = new Telegraf<Scenes.WizardContext>(token);
-
-const registerMentor = new Scenes.WizardScene(
-  'register-mentor',
-  async (ctx: Scenes.WizardContext) => {
-    await ctx.reply('Введите своё имя');
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply('Введите свою фамилию');
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply('Введите свою специализацию');
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply('Введите ваше количество лет опыта');
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    return ctx.scene.leave();
-  },
-);
-
-const findMentor = new Scenes.WizardScene(
-  'find-mentor',
-  async (ctx: Scenes.WizardContext) => {
-    await ctx.reply('Введи своё имя');
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply('Введи свою фамилию');
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply(
-      'С какой из следующих профессиональных областей ты связываешь свое дальнейшее карьерное развитие?  Выбери одно направление, которое тебе наиболее релевантно. Список направлений кнопками:',
-    );
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply(
-      'Какой у тебя опыт работы в профессии, которую ты выбрал выше (в годах)?\nЕсли у тебя нет опыта работы в этой профессии, напиши “0”. Пожалуйста,укажите целое число (округляй до ближайшего целого).',
-    );
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply('К сожалению, у нас пока нет подходящих менторов.');
-    return ctx.scene.leave();
-  },
-);
-
 const stage = new Scenes.Stage<Scenes.WizardContext>([
-  registerMentor,
+  registerAsMentor,
   findMentor,
 ]);
+
+const bot = new Telegraf<Scenes.WizardContext>(token);
+
 bot.use(session());
+bot.use(Telegraf.log());
 bot.use(stage.middleware());
 
 bot.telegram.setMyCommands([
@@ -73,7 +26,7 @@ bot.telegram.setMyCommands([
     description: 'Найти ментора',
   },
   {
-    command: 'register_mentor',
+    command: 'register_as_mentor',
     description: 'Зарегистрироваться как ментор',
   },
   {
@@ -82,8 +35,8 @@ bot.telegram.setMyCommands([
   },
 ]);
 
-bot.command('register_mentor', async (ctx) => {
-  ctx.scene.enter('register-mentor');
+bot.command('register_as_mentor', async (ctx) => {
+  ctx.scene.enter('register-as-mentor');
 });
 
 bot.command('find_mentor', async (ctx) => {
@@ -91,6 +44,8 @@ bot.command('find_mentor', async (ctx) => {
 });
 
 bot.command('start', async (ctx) => {
+  console.log('Начат разговор с ', ctx.message.chat.id);
+
   await ctx.reply(
     'Привет!\nЯ бот для менторства, моя миссия – помогать менторам и менти найти друг друга.\nЧтобы найти ментора, нажми /find_mentor\nЕсли захочешь вернуться в основное меню, нажми /start (прогресс будет потерян).',
   );
