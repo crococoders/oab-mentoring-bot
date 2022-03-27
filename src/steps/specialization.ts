@@ -1,15 +1,10 @@
 import { Markup, Scenes } from 'telegraf';
+import { specializations } from '../types/specialization';
 
-const specializations = Markup.inlineKeyboard(
-  [
-    Markup.button.callback('Backend разработка', 'backend'),
-    Markup.button.callback('Frontend разработка', 'frontend'),
-    Markup.button.callback('Мобильная разработка', 'mobile'),
-    Markup.button.callback('QA / Тестирование', 'qa'),
-    Markup.button.callback('Data Science', 'ds'),
-    Markup.button.callback('UX / UI Дизайн', 'design'),
-    Markup.button.callback('Product / Project Менеджмент', 'pm'),
-  ],
+const specializationsKeyboard = Markup.inlineKeyboard(
+  specializations.map((s) => {
+    return Markup.button.callback(s.name, s.key);
+  }),
   {
     wrap: () => true,
   },
@@ -17,8 +12,8 @@ const specializations = Markup.inlineKeyboard(
 
 const specializationStep = async (ctx: Scenes.WizardContext) => {
   await ctx.reply(
-    'С какой из следующих профессиональных областей ты связываешь свое дальнейшее карьерное развитие?  Выбери одно направление, которое тебе наиболее релевантно. Список направлений кнопками:',
-    specializations,
+    'С какой из следующих профессиональных областей ты связываешь свое дальнейшее карьерное развитие? Выбери одно направление, которое тебе наиболее релевантно. Список направлений кнопками:',
+    specializationsKeyboard,
   );
   return ctx.wizard.next();
 };

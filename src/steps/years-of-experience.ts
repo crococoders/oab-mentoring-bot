@@ -1,17 +1,14 @@
 import { Composer, Scenes } from 'telegraf';
-import { MessageChannel } from 'worker_threads';
+import { regexToMatchSpecializations } from '../types/specialization';
 
 const yearsOfExperienceStep = new Composer<Scenes.WizardContext>();
 
-yearsOfExperienceStep.action(
-  /backend|frontend|mobile|qa|ds|design|pm/,
-  async (ctx) => {
-    await ctx.reply(
-      'Какой у тебя опыт работы в выбранной профессии? (в годах)\n\nЕсли у тебя нет опыта работы в этой профессии, напиши “0”.',
-    );
-    return ctx.wizard.next();
-  },
-);
+yearsOfExperienceStep.action(regexToMatchSpecializations, async (ctx) => {
+  await ctx.reply(
+    'Какой у тебя опыт работы в выбранной профессии? (в годах)\n\nЕсли у тебя нет опыта работы в этой профессии, напиши “0”.',
+  );
+  return ctx.wizard.next();
+});
 
 yearsOfExperienceStep.use((ctx) =>
   ctx.replyWithMarkdown('Выбери одно из направлений нажав кнопку.'),
