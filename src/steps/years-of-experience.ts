@@ -1,7 +1,8 @@
 import { Composer, Scenes } from 'telegraf';
+import { ExtendedContext } from '../types/extended-context';
 import { regexToMatchSpecializations } from '../types/specialization';
 
-const yearsOfExperienceStep = new Composer<Scenes.WizardContext>();
+const yearsOfExperienceStep = new Composer<ExtendedContext>();
 
 yearsOfExperienceStep.action(regexToMatchSpecializations, async (ctx) => {
   await ctx.reply(

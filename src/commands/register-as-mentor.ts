@@ -7,7 +7,7 @@ import {
 
 const registerAsMentor = new Scenes.WizardScene(
   'register-as-mentor',
-  async (ctx: Scenes.WizardContext) => {
+  async (ctx) => {
     await ctx.reply('Введи своё имя');
     return ctx.wizard.next();
   },

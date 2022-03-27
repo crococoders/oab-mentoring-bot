@@ -1,6 +1,7 @@
 import { Composer, Markup, Scenes, session, Telegraf } from 'telegraf';
 import findMentors from './commands/find-mentors';
 import registerAsMentor from './commands/register-as-mentor';
+import { ExtendedContext } from './types/extended-context';
 require('dotenv').config();
 
 const token = process.env.TELEGRAM_BOT_ACCESS_TOKEN;
@@ -9,12 +10,17 @@ if (token === undefined) {
   throw new Error('BOT_TOKEN must be provided!');
 }
 
-const stage = new Scenes.Stage<Scenes.WizardContext>([
+const stage = new Scenes.Stage<ExtendedContext>([
   registerAsMentor,
   findMentors,
 ]);
 
-const bot = new Telegraf<Scenes.WizardContext>(token);
+const bot = new Telegraf<ExtendedContext>(token);
+
+bot.context.extendedContextData = {
+  mentorsPage: 1,
+  mentors: [],
+};
 
 bot.use(session());
 bot.use(Telegraf.log());
