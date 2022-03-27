@@ -1,184 +1,103 @@
-const TelegramBot = require('node-telegram-bot-api');
-const StateMachine = require('javascript-state-machine');
+import { Composer, Markup, Scenes, session, Telegraf } from 'telegraf';
 require('dotenv').config();
 
 const token = process.env.TELEGRAM_BOT_ACCESS_TOKEN;
-const bot = new TelegramBot(token, { polling: true });
 
-const users = [];
+if (token === undefined) {
+  throw new Error('BOT_TOKEN must be provided!');
+}
 
-const createFsm = () => {
-  return StateMachine.create({
-    initial: 'waitingStart',
-    final: 'final',
-    events: [
-      { name: 'gotStart', from: 'waitingStart', to: 'waitingName' },
-      { name: 'gotName', from: 'waitingName', to: 'waitingSurname' },
-      {
-        name: 'gotSurname',
-        from: 'waitingSurname',
-        to: 'waitingSpecialization',
-      },
-      {
-        name: 'gotSpecialization',
-        from: 'waitingSpecialization',
-        to: 'waitingYearsOfExperience',
-      },
-      {
-        name: 'gotYearsOfExperience',
-        from: 'waitingYearsOfExperience',
-        to: 'final',
-      },
-      { name: 'gotFinal', from: 'gotYearsOfExperience', to: 'final' },
-    ],
-  });
-};
+const bot = new Telegraf<Scenes.WizardContext>(token);
 
-const eventFromStateAndMessageText = (state: any, text: any) => {
-  switch (state) {
-    case 'waitingStart':
-      return text === '/start' && 'gotStart';
-    case 'waitingName':
-      return 'gotName';
-    case 'waitingSurname':
-      return 'gotSurname';
-    case 'waitingSpecialization':
-      return 'gotSpecialization';
-    case 'waitingYearsOfExperience':
-      return 'gotYearsOfExperience';
-    case 'final':
-      return 'gotFinal';
-  }
-};
+const registerMentor = new Scenes.WizardScene(
+  'register-mentor',
+  async (ctx: Scenes.WizardContext) => {
+    await ctx.reply('Введите своё имя');
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    await ctx.reply('Введите свою фамилию');
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    await ctx.reply('Введите свою специализацию');
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    await ctx.reply('Введите ваше количество лет опыта');
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    return ctx.scene.leave();
+  },
+);
 
-const start = () => {
-  bot.on('message', (message: any) => {
-    if (!message.reply_to_message) {
-      respondTo(message);
-    }
-  });
-
-  bot.on('callback_query', (message: any) => {
-    console.log('onMessage', message.data);
-  });
-};
-
-const respondTo = async (message: any) => {
-  let fsm = createFsm();
-  let lastReply = message;
-
-  let name: any;
-  let surname: any;
-  let specialization: any;
-  let yearsOfExperience: any;
-
-  let lastMessage: any;
-
-  fsm.ongotStart = () => {
-    lastMessage = bot.sendMessage(
-      message.chat.id,
-      'Давай начнём! Как тебя зовут?',
-      { reply_markup: JSON.stringify({ force_reply: true }) },
+const findMentor = new Scenes.WizardScene(
+  'find-mentor',
+  async (ctx: Scenes.WizardContext) => {
+    await ctx.reply('Введи своё имя');
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    await ctx.reply('Введи свою фамилию');
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    await ctx.reply(
+      'С какой из следующих профессиональных областей ты связываешь свое дальнейшее карьерное развитие?  Выбери одно направление, которое тебе наиболее релевантно. Список направлений кнопками:',
     );
-  };
-
-  fsm.ongotName = (event: any, from: any, to: any, message: any) => {
-    name = message.text;
-    lastMessage = bot.sendMessage(message.chat.id, `Теперь введи фамилию`, {
-      reply_markup: JSON.stringify({ force_reply: true }),
-    });
-  };
-
-  const specializations = {
-    inline_keyboard: [
-      [
-        {
-          text: 'Web разработка',
-          callback_data: 'web',
-        },
-        {
-          text: 'Мобильная разработка',
-          callback_data: 'mobile',
-        },
-        {
-          text: 'UX/UI дизайн',
-          callback_data: 'uxui',
-        },
-        {
-          text: 'DevOps',
-          callback_data: 'devops',
-        },
-      ],
-    ],
-  };
-
-  fsm.ongotSurname = (event: any, from: any, to: any, message: any) => {
-    surname = message.text;
-    lastMessage = bot.sendMessage(
-      message.chat.id,
-      `Теперь введи специализацию`,
-      {
-        reply_markup: JSON.stringify({ force_reply: true }),
-      },
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    await ctx.reply(
+      'Какой у тебя опыт работы в профессии, которую ты выбрал выше (в годах)?\nЕсли у тебя нет опыта работы в этой профессии, напиши “0”. Пожалуйста,укажите целое число (округляй до ближайшего целого).',
     );
-  };
+    return ctx.wizard.next();
+  },
+  async (ctx) => {
+    await ctx.reply('К сожалению, у нас пока нет подходящих менторов.');
+    return ctx.scene.leave();
+  },
+);
 
-  fsm.ongotSpecialization = (event: any, from: any, to: any, message: any) => {
-    specialization = message.text;
-    lastMessage = bot.sendMessage(
-      message.chat.id,
-      `Теперь введи сколько у тебя лет опыта`,
-      {
-        reply_markup: JSON.stringify({ force_reply: true }),
-      },
-    );
-  };
+const stage = new Scenes.Stage<Scenes.WizardContext>([
+  registerMentor,
+  findMentor,
+]);
+bot.use(session());
+bot.use(stage.middleware());
 
-  fsm.ongotYearsOfExperience = (
-    event: any,
-    from: any,
-    to: any,
-    message: any,
-  ) => {
-    yearsOfExperience = message.text;
-    fsm.ongotFinal();
-  };
+bot.telegram.setMyCommands([
+  {
+    command: 'find_mentor',
+    description: 'Найти ментора',
+  },
+  {
+    command: 'register_mentor',
+    description: 'Зарегистрироваться как ментор',
+  },
+  {
+    command: 'start',
+    description: 'Начать',
+  },
+]);
 
-  fsm.ongotFinal = () => {
-    const user = {
-      name: name,
-      surname: surname,
-      specialization: specialization,
-      yearsOfExperience: yearsOfExperience,
-    };
-    users.push(user);
-    lastMessage = bot.sendMessage(
-      message.chat.id,
-      'Супер, ты зарегестрирован',
-      { reply_markup: JSON.stringify({ force_reply: false }) },
-    );
-  };
+bot.command('register_mentor', async (ctx) => {
+  ctx.scene.enter('register-mentor');
+});
 
-  while (!fsm.isFinished()) {
-    let text = lastReply.text;
-    let event = eventFromStateAndMessageText(fsm.current, text);
+bot.command('find_mentor', async (ctx) => {
+  ctx.scene.enter('find-mentor');
+});
 
-    if (!event || fsm.cannot(event)) {
-      bot.sendMessage(message.chat.id, 'Я не ожидал этого, /start');
-      break;
-    }
+bot.command('start', async (ctx) => {
+  await ctx.reply(
+    'Привет!\nЯ бот для менторства, моя миссия – помогать менторам и менти найти друг друга.\nЧтобы найти ментора, нажми /find_mentor\nЕсли захочешь вернуться в основное меню, нажми /start (прогресс будет потерян).',
+  );
+});
 
-    fsm[event](lastReply);
+bot.launch();
 
-    let sentMessage = await lastMessage;
-    lastReply = await new Promise((resolve) =>
-      bot.onReplyToMessage(
-        sentMessage.chat.id,
-        sentMessage.message_id,
-        resolve,
-      ),
-    );
-  }
-};
-
-start();
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
