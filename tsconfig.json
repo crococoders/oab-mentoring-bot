@@ -1,23 +1,27 @@
 {
-    "compilerOptions": {
-        "target": "es6",                       
-        "module": "commonjs",                    
-        "lib": ["es6"],
-        "allowJs": true,
-        "outDir": "build",                          
-        "rootDir": "src",
-        "strict": true,         
-        "noImplicitAny": true,
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "types": ["node", "@types/jest"],
-        "typeRoots" : ["./node_modules/@types"],
-      },
-      "include": [
-        "src/*.ts",
-        "/src/**/*"
-      ],
-      "exclude" : [
-        "./node_modules"
+  "compilerOptions": {
+    "lib": [
+      "esnext"
+    ],
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "useUnknownInCatchVariables": true,
+    "strict": true,
+    "incremental": true,
+    "module": "commonjs",
+    "target": "es2018",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "src",
+    "paths": {
+      "@bot/*": [
+        "*"
       ]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
