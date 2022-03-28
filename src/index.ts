@@ -23,7 +23,6 @@ bot.context.extendedContextData = {
 };
 
 bot.use(session());
-bot.use(Telegraf.log());
 bot.use(stage.middleware());
 
 bot.telegram.setMyCommands([
@@ -50,7 +49,7 @@ bot.command('find_mentors', async (ctx) => {
 });
 
 bot.command('start', async (ctx) => {
-  console.log('Начат разговор с ', ctx.message.chat.id);
+  console.log('Начат разговор с', ctx.message.chat.id);
 
   await ctx.reply(
     'Привет!\nЯ бот для менторства, моя миссия – помогать менторам и менти найти друг друга.\nЧтобы найти ментора, нажми /find_mentors\nЕсли захочешь вернуться в основное меню, нажми /start (прогресс будет потерян).',

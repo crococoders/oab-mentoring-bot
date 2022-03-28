@@ -4,17 +4,11 @@ import {
   yearsOfExperienceStep,
   validateYearsOfExperience,
 } from '../steps/years-of-experience';
+import { nameStep } from '../steps/name';
 
 const registerAsMentor = new Scenes.WizardScene(
   'register-as-mentor',
-  async (ctx) => {
-    await ctx.reply('Введи своё имя');
-    return ctx.wizard.next();
-  },
-  async (ctx) => {
-    await ctx.reply('Введи свою фамилию');
-    return ctx.wizard.next();
-  },
+  nameStep,
   specializationStep,
   yearsOfExperienceStep,
   async (ctx) => {

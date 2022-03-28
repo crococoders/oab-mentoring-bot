@@ -7,6 +7,7 @@ import {
 import tryToFindMentors from '../logic/try-to-find-mentors';
 import paginate from '../logic/paginate';
 import { ExtendedContext } from '../types/extended-context';
+import { nameStep } from '../steps/name';
 
 const PAGE_SIZE = 5;
 
@@ -67,23 +68,22 @@ displayMentorsStep.use(async (ctx) => {
   }
 });
 
+const validateYearsOfExperienceStep = async (ctx: any) => {
+  if (!validateYearsOfExperience(ctx)) {
+    return ctx.reply(
+      'Неверный формат, пожалуйста, введи число. \n\nЕсли у тебя нет опыта работы в этой профессии, напиши "0". ',
+    );
+  } else {
+    return ctx.wizard.next();
+  }
+};
+
 const findMentors = new Scenes.WizardScene(
   'find-mentors',
-  async (ctx) => {
-    await ctx.reply('Введи своё имя');
-    return ctx.wizard.next();
-  },
+  nameStep,
   specializationStep,
   yearsOfExperienceStep,
-  async (ctx) => {
-    if (!validateYearsOfExperience(ctx)) {
-      return ctx.reply(
-        'Неверный формат, пожалуйста, введи число. \n\nЕсли у тебя нет опыта работы в этой профессии, напиши "0". ',
-      );
-    } else {
-      return ctx.wizard.next();
-    }
-  },
+  validateYearsOfExperienceStep,
   displayMentorsStep,
 );
 
