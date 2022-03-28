@@ -45,6 +45,7 @@ bot.command('register_as_mentor', async (ctx) => {
 });
 
 bot.command('find_mentors', async (ctx) => {
+  ctx.extendedContextData.mentorsPage = 1;
   ctx.scene.enter('find-mentors');
 });
 

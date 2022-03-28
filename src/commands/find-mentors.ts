@@ -13,10 +13,11 @@ const PAGE_SIZE = 5;
 
 const displayMentorsStep = new Composer<ExtendedContext>();
 
-// displayMentorsStep.action('more', async (ctx) => {
-//   console.log('more!!1');
-//   await ctx.wizard.selectStep(4);
-//   return;
+// displayMentorsStep.action('more', (ctx) => {
+// console.log(ctx.wizard.steps[ctx.wizard.cursor].handler(ctx));
+// console.log(ctx.scene.state);
+// ctx.wizard.selectStep();
+// return;
 // });
 
 displayMentorsStep.action('found', async (ctx) => {
@@ -39,9 +40,16 @@ displayMentorsStep.use(async (ctx) => {
 
     const pagination = paginate(
       ctx.extendedContextData.mentors.length,
-      ctx.extendedContextData.mentorsPage++,
+      ctx.extendedContextData.mentorsPage,
       PAGE_SIZE,
     );
+
+    if (ctx.extendedContextData.mentorsPage > pagination.endPage) {
+      await ctx.reply(
+        'К сожалению, у нас пока нет подходящих менторов. Если они у нас появятся, мы обязательно тебя уведомим.\n\nА пока мы предлагаем тебе попробовать найти ментора в https://t.me/Nfng_bot\n\nЕсли хочешь вернуться в основное меню, нажми /start (прогресс будет потерян)',
+      );
+      return ctx.scene.leave();
+    }
 
     const replies = ctx.extendedContextData.mentors
       .slice(pagination.startIndex, pagination.endIndex + 1)
@@ -51,6 +59,7 @@ displayMentorsStep.use(async (ctx) => {
         );
       });
 
+    ctx.extendedContextData.mentorsPage += 1;
     await Promise.all(replies);
 
     await ctx.reply(
@@ -74,7 +83,8 @@ const validateYearsOfExperienceStep = async (ctx: any) => {
       'Неверный формат, пожалуйста, введи число. \n\nЕсли у тебя нет опыта работы в этой профессии, напиши "0". ',
     );
   } else {
-    return ctx.wizard.next();
+    ctx.wizard.next();
+    return ctx.wizard.steps[ctx.wizard.cursor].handler(ctx);
   }
 };
 
