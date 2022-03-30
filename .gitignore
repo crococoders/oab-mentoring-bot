@@ -128,5 +128,6 @@ dist
 
 # Data
 data/
+db-data/
 
 *.env

@@ -18,6 +18,7 @@ import {
   botAdminFeature,
   languageSelectFeature,
   welcomeFeature,
+  findMentorsFeature,
 } from "@bot/features";
 import { isMultipleLocales } from "@bot/helpers/i18n";
 import { handleError } from "@bot/helpers/error-handler";
@@ -46,10 +47,11 @@ bot.use(registerUser());
 
 bot.use(botAdminFeature);
 bot.use(welcomeFeature);
+bot.use(findMentorsFeature);
 
-if (isMultipleLocales) {
-  bot.use(languageSelectFeature);
-}
+// if (isMultipleLocales) {
+bot.use(languageSelectFeature);
+// }
 
 if (config.isDev) {
   bot.catch(handleError);

@@ -5,7 +5,8 @@ import { Context } from "@bot/types";
 import { logger } from "@bot/logger";
 import { getMetadata } from "@bot/helpers/logging";
 
-export const composer = new Composer<Context>();
+type MyContext = Context;
+export const composer = new Composer<MyContext>();
 
 const filteredComposer = composer.filter(isPrivate);
 
