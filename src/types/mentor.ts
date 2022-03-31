@@ -3,6 +3,4 @@ interface MentorData {
   yearsOfExperience: number;
 }
 
-type MentorsFlavor = Array<MentorData>;
-
-export { MentorData, MentorsFlavor };
+export { MentorData };

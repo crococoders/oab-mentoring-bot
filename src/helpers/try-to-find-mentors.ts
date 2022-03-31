@@ -1,7 +1,7 @@
-import { MentorsFlavor } from "../types/mentor";
+import { MentorData } from "../types/mentor";
 
 const tryToFindMentors = async () => {
-  const mentors: MentorsFlavor[] = [
+  const mentors: MentorData[] = [
     {
       name: "Марат Абылкаиров",
       yearsOfExperience: 3,

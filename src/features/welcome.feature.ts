@@ -14,5 +14,5 @@ filteredComposer.command("start", async (ctx) => {
   logger.info({ msg: "handle start command", ...getMetadata(ctx) });
 
   await ctx.replyWithChatAction("typing");
-  await ctx.reply(ctx.t("welcome"));
+  await ctx.reply(ctx.t("WELCOME"));
 });

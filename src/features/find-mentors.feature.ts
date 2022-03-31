@@ -1,21 +1,11 @@
 import { SessionFlavor, Composer, session } from "grammy";
 import { Router } from "@grammyjs/router";
 import { isPrivate } from "grammy-guard";
-import { Context } from "@bot/types";
+import { Context, SessionData } from "@bot/types";
 import { selectSpecializationKeyboard } from "@bot/keyboards";
 import tryToFindMentors from "@bot/helpers/try-to-find-mentors";
 import paginate from "@bot/helpers/pagination";
 import { Menu } from "@grammyjs/menu";
-
-interface SessionData {
-  step:
-    | "gotName"
-    | "gotSpecialization"
-    | "gotYearsOfExperience"
-    | "displayMentors";
-  mentors: [];
-  mentorsPage: 1;
-}
 
 const PAGE_SIZE = 5;
 
@@ -24,14 +14,19 @@ export const composer = new Composer<MyContext>();
 
 const filteredComposer = composer.filter(isPrivate);
 
-function initial(): SessionData {
-  return { step: "gotName", mentors: [], mentorsPage: 1 };
-}
-filteredComposer.use(session({ initial }));
+filteredComposer.use(
+  session({
+    initial: (): SessionData => ({
+      step: "gotName",
+      mentorsPage: 1,
+      mentors: [],
+    }),
+  })
+);
 
 filteredComposer.command("find_mentors", async (ctx) => {
   await ctx.replyWithChatAction("typing");
-  await ctx.reply(ctx.t("fillName"));
+  await ctx.reply(ctx.t("FILL_NAME"));
   ctx.session.step = "gotName";
 });
 
@@ -40,16 +35,14 @@ filteredComposer.use(selectSpecializationKeyboard);
 
 router.route("gotName", async (ctx) => {
   await ctx.replyWithChatAction("typing");
-  await ctx.reply(ctx.t("chooseSpecialization"), {
+  await ctx.reply(ctx.t("CHOOSE_SPECIALIZATION"), {
     reply_markup: selectSpecializationKeyboard,
   });
   ctx.session.step = "gotSpecialization";
 });
 
 router.route("gotSpecialization", async (ctx) => {
-  await ctx.reply(
-    "Какой у тебя опыт работы в выбранной профессии? (в годах)\n\nЕсли у тебя нет опыта работы в этой профессии, напиши “0”."
-  );
+  await ctx.reply(ctx.t("YEARS_OF_EXPERIENCE"));
   ctx.session.step = "gotYearsOfExperience";
 });
 
@@ -62,16 +55,14 @@ const validateYearsOfExperience = (ctx: any) => {
 
 router.route("gotYearsOfExperience", async (ctx) => {
   if (!validateYearsOfExperience(ctx)) {
-    await ctx.reply(
-      'Неверный формат, пожалуйста, введи число. \n\nЕсли у тебя нет опыта работы в этой профессии, напиши "0". '
-    );
+    await ctx.reply(ctx.t("YEARS_OF_EXPERIENCE_WRONG"));
   } else {
     ctx.session.step = "displayMentors";
   }
 });
 
 const displayMentorsMenu = new Menu("display-mentors")
-  .text("Показать ещё", (mrctx) => mrctx.reply("You pressed A!"))
+  .text("Показать ещё", (mrctx) => mrctx.session.step("displayMentors"))
   .text("Я нашел", (fndctx) => fndctx.reply("До новых встреч!"))
   .row();
 
@@ -80,11 +71,10 @@ router.route("displayMentors", async (ctx) => {
     const mentors = await tryToFindMentors();
     ctx.session.mentors = mentors;
     ctx.session.mentorsPage = 1;
-    console.log(mentors);
   }
 
   if (ctx.session.mentors.length > 0) {
-    await ctx.reply(`🎉 Я нашел для тебя следующие варианты:`);
+    await ctx.reply(ctx.t("BOT_FOUND_MENTORS"));
 
     const pagination = paginate(
       ctx.session.mentors.length,
@@ -93,9 +83,7 @@ router.route("displayMentors", async (ctx) => {
     );
 
     if (ctx.session.mentorsPage > pagination.endPage) {
-      await ctx.reply(
-        "К сожалению, у нас пока нет подходящих менторов. Если они у нас появятся, мы обязательно тебя уведомим.\n\nА пока мы предлагаем тебе попробовать найти ментора в https://t.me/Nfng_bot\n\nЕсли хочешь вернуться в основное меню, нажми /start (прогресс будет потерян)"
-      );
+      await ctx.reply(ctx.t("NO_MENTORS_FOUND"));
     }
 
     const replies = ctx.session.mentors
@@ -109,16 +97,11 @@ router.route("displayMentors", async (ctx) => {
     ctx.session.mentorsPage += 1;
     await Promise.all(replies);
 
-    await ctx.reply(
-      "Если кто-то из менторов тебе подходит, нажми “Я нашел”: я подскажу тебе следующие шаги.\n\nЕсли хочешь посмотреть еще варианты, нажми “Покажи еще”.\n\nЕсли хочешь начать поиск заново, нажми /start",
-      {
-        reply_markup: displayMentorsMenu,
-      }
-    );
+    await ctx.reply(ctx.t("MENTORS_FOUND"), {
+      reply_markup: displayMentorsMenu,
+    });
   } else {
-    await ctx.reply(
-      "К сожалению, у нас пока нет подходящих менторов. Если они у нас появятся, мы обязательно тебя уведомим.\n\nА пока мы предлагаем тебе попробовать найти ментора в https://t.me/Nfng_bot\n\nЕсли хочешь вернуться в основное меню, нажми /start (прогресс будет потерян)"
-    );
+    await ctx.reply(ctx.t("NO_MENTORS_FOUND"));
   }
 });
 filteredComposer.use(displayMentorsMenu);

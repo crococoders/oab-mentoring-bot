@@ -20,17 +20,16 @@ export const findOrCreateByTelegramId = async (
 
   const { languageCode } = data;
 
-  // TO-DO FIX THIS!!!!
-  // return prisma.user.upsert({
-  //   where: {
-  //     telegramId,
-  //   },
-  //   update: {},
-  //   create: {
-  //     telegramId,
-  //     languageCode,
-  //   },
-  // });
+  return prisma.user.upsert({
+    where: {
+      telegramId,
+    },
+    update: {},
+    create: {
+      telegramId,
+      languageCode,
+    },
+  });
 };
 
 export const updateByTelegramId = async (
