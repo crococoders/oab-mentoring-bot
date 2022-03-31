@@ -8,11 +8,9 @@ import {
 } from "@bot/keyboards";
 import { isNumber } from "@bot/helpers/is-number";
 
-export const findMentorsScene = new Scene<Context, SessionState>(
-  "find_mentors"
-);
+export const feature = new Scene<Context, SessionState>("find_mentors");
 
-findMentorsScene.use((ctx, next) => {
+feature.use((ctx, next) => {
   console.log("Entering main scene...");
   ctx.scene.session = {
     mentors: [],
@@ -21,11 +19,11 @@ findMentorsScene.use((ctx, next) => {
   return next();
 });
 
-findMentorsScene.do(async (ctx) => {
+feature.do(async (ctx) => {
   await ctx.reply(ctx.t("FILL_NAME"));
 });
 
-findMentorsScene.wait().on("message:text", async (ctx) => {
+feature.wait().on("message:text", async (ctx) => {
   console.log("Received name", ctx.message.text);
   await ctx.reply(ctx.t("CHOOSE_SPECIALIZATION"), {
     reply_markup: selectSpecializationKeyboard,
@@ -34,20 +32,18 @@ findMentorsScene.wait().on("message:text", async (ctx) => {
   ctx.scene.resume();
 });
 
-findMentorsScene
-  .wait()
-  .on(["callback_query:data", "message:text"], async (ctx) => {
-    if (ctx.callbackQuery?.data !== undefined) {
-      await ctx.answerCallbackQuery("Принято!");
-      console.log("Received specialization", ctx.callbackQuery.data);
-      await ctx.reply(ctx.t("YEARS_OF_EXPERIENCE"));
-      ctx.scene.resume();
-    } else {
-      await ctx.reply("Выбери одно из направлений нажав кнопку.");
-    }
-  });
+feature.wait().on(["callback_query:data", "message:text"], async (ctx) => {
+  if (ctx.callbackQuery?.data !== undefined) {
+    await ctx.answerCallbackQuery("Принято!");
+    console.log("Received specialization", ctx.callbackQuery.data);
+    await ctx.reply(ctx.t("YEARS_OF_EXPERIENCE"));
+    ctx.scene.resume();
+  } else {
+    await ctx.reply("Выбери одно из направлений нажав кнопку.");
+  }
+});
 
-findMentorsScene.wait().on("message:text", async (ctx) => {
+feature.wait().on("message:text", async (ctx) => {
   if (
     ctx.msg !== undefined &&
     ctx.msg.text !== undefined &&
@@ -100,9 +96,9 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
   }
 };
 
-findMentorsScene.do(handler);
+feature.do(handler);
 
-findMentorsScene.wait().on("callback_query:data", async (ctx) => {
+feature.wait().on("callback_query:data", async (ctx) => {
   await ctx.answerCallbackQuery();
   console.log("Received action", ctx.callbackQuery.data);
   if (ctx.callbackQuery.data === "found") {

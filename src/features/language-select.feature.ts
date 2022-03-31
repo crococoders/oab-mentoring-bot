@@ -6,13 +6,11 @@ import { logger } from "@bot/logger";
 import { selectLanguageKeyboard } from "@bot/keyboards";
 import { getMetadata } from "@bot/helpers/logging";
 
-export const composer = new Composer<Context>();
+export const feature = new Composer<Context>().filter(isPrivate);
 
-const filteredComposer = composer.filter(isPrivate);
+feature.use(selectLanguageKeyboard);
 
-filteredComposer.use(selectLanguageKeyboard);
-
-filteredComposer.command("language", async (ctx) => {
+feature.command("language", async (ctx) => {
   logger.info({ msg: "handle language command", ...getMetadata(ctx) });
 
   await ctx.replyWithChatAction("typing");

@@ -13,9 +13,9 @@ import {
 import { isMultipleLocales, locales } from "@bot/helpers/i18n";
 import { getMetadata } from "@bot/helpers/logging";
 
-export const composer = new Composer<Context>();
+export const feature = new Composer<Context>();
 
-const filteredComposer = composer
+const filteredComposer = feature
   .filter(isPrivate)
   .filter(isUserId(config.BOT_ADMIN_USER_ID));
 
