@@ -1,48 +1,16 @@
 import { Scene, SceneFlavoredContext } from "grammy-scenes";
-import { Context, SessionState, specializations } from "@bot/types";
-import { InlineKeyboardButton, InlineKeyboardMarkup } from "@grammyjs/types";
+import { Context, SessionState } from "@bot/types";
 import tryToFindMentors from "@bot/helpers/try-to-find-mentors";
 import paginate from "@bot/helpers/pagination";
+import {
+  mentorsListActionsKeyboard,
+  selectSpecializationKeyboard,
+} from "@bot/keyboards";
+import { isNumber } from "@bot/helpers/is-number";
 
 export const findMentorsScene = new Scene<Context, SessionState>(
   "find_mentors"
 );
-
-const selectSpecializationKeyboard: InlineKeyboardMarkup = {
-  inline_keyboard: specializations.map((s): InlineKeyboardButton[] => {
-    return [
-      {
-        text: s.name,
-        callback_data: s.key,
-      },
-    ];
-  }),
-};
-
-const displayMentorsMenu: any = {
-  inline_keyboard: [
-    [
-      {
-        text: "Показать ещё",
-        callback_data: "more",
-      },
-      {
-        text: "Я нашёл",
-        callback_data: "found",
-      },
-    ],
-  ],
-};
-
-const validateYearsOfExperience = (ctx: Context) => {
-  if (ctx.msg !== undefined && ctx.msg.text !== undefined) {
-    return (
-      !Number.isNaN(parseFloat(String(ctx.msg.text!))) &&
-      Number.isFinite(Number(ctx.msg.text!))
-    );
-  }
-  return false;
-};
 
 findMentorsScene.use((ctx, next) => {
   console.log("Entering main scene...");
@@ -80,7 +48,11 @@ findMentorsScene
   });
 
 findMentorsScene.wait().on("message:text", async (ctx) => {
-  if (!validateYearsOfExperience(ctx)) {
+  if (
+    ctx.msg !== undefined &&
+    ctx.msg.text !== undefined &&
+    !isNumber(ctx.msg.text!)
+  ) {
     await ctx.reply(ctx.t("YEARS_OF_EXPERIENCE_WRONG"));
   } else {
     ctx.scene.resume();
@@ -121,7 +93,7 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
     await Promise.all(replies);
 
     await ctx.reply(ctx.t("MENTORS_FOUND"), {
-      reply_markup: displayMentorsMenu,
+      reply_markup: mentorsListActionsKeyboard,
     });
   } else {
     await ctx.reply(ctx.t("NO_MENTORS_FOUND"));
