@@ -14,15 +14,15 @@ export const composer = new Composer<MyContext>();
 
 const filteredComposer = composer.filter(isPrivate);
 
-filteredComposer.use(
-  session({
-    initial: (): SessionData => ({
-      step: "gotName",
-      mentorsPage: 1,
-      mentors: [],
-    }),
-  })
-);
+// filteredComposer.use(
+//   session({
+//     initial: (): SessionData => ({
+//       step: "gotName",
+//       mentorsPage: 1,
+//       mentors: [],
+//     }),
+//   })
+// );
 
 filteredComposer.command("find_mentors", async (ctx) => {
   await ctx.replyWithChatAction("typing");
@@ -61,9 +61,11 @@ router.route("gotYearsOfExperience", async (ctx) => {
   }
 });
 
-const displayMentorsMenu = new Menu("display-mentors")
-  .text("Показать ещё", (mrctx) => mrctx.session.step("displayMentors"))
-  .text("Я нашел", (fndctx) => fndctx.reply("До новых встреч!"))
+const displayMentorsMenu = new Menu<MyContext>("display-mentors")
+  .text("Показать ещё", (ctx) => {
+    ctx.session.step = "displayMentors";
+  })
+  .text("Я нашел", (ctx) => ctx.reply("До новых встреч!"))
   .row();
 
 router.route("displayMentors", async (ctx) => {

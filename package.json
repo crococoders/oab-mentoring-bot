@@ -39,7 +39,8 @@
     "parse-mode": "0.1.2",
     "pino": "7.9.2",
     "pino-pretty": "7.5.4",
-    "prom-client": "14.0.1"
+    "prom-client": "14.0.1",
+    "telegraf-middleware-console-time": "^2.1.0"
   },
   "devDependencies": {
     "@types/debug": "4.1.7",

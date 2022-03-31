@@ -2,6 +2,11 @@ import { Bot } from "grammy";
 import { limit as rateLimit } from "@grammyjs/ratelimiter";
 import { apiThrottler } from "@grammyjs/transformer-throttler";
 import { hydrateReply, parseMode } from "parse-mode";
+import {
+  generateBeforeMiddleware,
+  generateAfterMiddleware,
+  generateUpdateMiddleware,
+} from "telegraf-middleware-console-time";
 
 import { Context } from "@bot/types";
 import { config } from "@bot/config";
@@ -32,16 +37,18 @@ bot.api.config.use(parseMode("HTML"));
 
 if (config.isDev) {
   bot.use(updatesLogger());
+  bot.use(generateUpdateMiddleware());
 }
 
-bot.use(collectMetrics());
 bot.use(rateLimit());
 bot.use(hydrateReply);
 bot.use(setupSession());
 bot.use(setupContext());
 bot.use(setupLogger());
 bot.use(setupI18n());
+// bot.use(generateBeforeMiddleware("registerUser"));
 bot.use(registerUser());
+// bot.use(generateAfterMiddleware("registerUser"));
 
 // Handlers
 
@@ -50,7 +57,7 @@ bot.use(welcomeFeature);
 bot.use(findMentorsFeature);
 
 // if (isMultipleLocales) {
-bot.use(languageSelectFeature);
+// bot.use(languageSelectFeature);
 // }
 
 if (config.isDev) {

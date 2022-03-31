@@ -10,9 +10,7 @@ export const middleware = () => async (ctx: Context, next: NextFunction) => {
       msg: "trying to register a user",
       user: ctx.from,
     });
-
     const { id: telegramId, language_code: languageCode } = ctx.from;
-
     ctx.user = await usersService.findOrCreateByTelegramId(telegramId, {
       languageCode,
     });

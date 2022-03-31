@@ -131,3 +131,4 @@ data/
 db-data/
 
 *.env
+!*.example.*.env

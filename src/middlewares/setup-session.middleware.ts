@@ -3,6 +3,7 @@ import { RedisAdapter } from "@satont/grammy-redis-storage";
 import Redis from "ioredis";
 
 import { config } from "@bot/config";
+import { SessionData } from "@bot/types";
 
 const storage = new RedisAdapter({
   instance: new Redis(config.REDIS_URL),
@@ -10,6 +11,9 @@ const storage = new RedisAdapter({
 
 export const middleware = () =>
   session({
-    initial: () => ({}),
-    storage,
+    initial: (): SessionData => ({
+      step: "gotName",
+      mentorsPage: 1,
+      mentors: [],
+    }),
   });
