@@ -1,12 +1,12 @@
-import { MentorData } from "./mentor";
+import { Mentor } from "./mentor";
 
-export interface SessionData {
+export interface SessionState {
   languageCode?: string;
   step:
     | "gotName"
     | "gotSpecialization"
     | "gotYearsOfExperience"
     | "displayMentors";
-  mentors: MentorData[];
+  mentors: Mentor[];
   mentorsPage: number;
 }

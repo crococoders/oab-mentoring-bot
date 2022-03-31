@@ -1,6 +1,7 @@
-interface MentorData {
+interface Mentor {
   name: string;
+  specialization: string;
   yearsOfExperience: number;
 }
 
-export { MentorData };
+export { Mentor };

@@ -1,4 +1,4 @@
 export { Context } from "./context";
-export { SessionData } from "./session";
+export { SessionState } from "./session";
 export { specializations } from "./specializations";
-export { MentorData } from "./mentor";
+export { Mentor } from "./mentor";

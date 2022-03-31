@@ -1,7 +1,7 @@
-import { SessionFlavor, Composer, session } from "grammy";
+import { Composer } from "grammy";
 import { Router } from "@grammyjs/router";
 import { isPrivate } from "grammy-guard";
-import { Context, SessionData } from "@bot/types";
+import { Context } from "@bot/types";
 import { selectSpecializationKeyboard } from "@bot/keyboards";
 import tryToFindMentors from "@bot/helpers/try-to-find-mentors";
 import paginate from "@bot/helpers/pagination";
@@ -9,20 +9,9 @@ import { Menu } from "@grammyjs/menu";
 
 const PAGE_SIZE = 5;
 
-type MyContext = Context & SessionFlavor<SessionData>;
-export const composer = new Composer<MyContext>();
+export const composer = new Composer<Context>();
 
 const filteredComposer = composer.filter(isPrivate);
-
-// filteredComposer.use(
-//   session({
-//     initial: (): SessionData => ({
-//       step: "gotName",
-//       mentorsPage: 1,
-//       mentors: [],
-//     }),
-//   })
-// );
 
 filteredComposer.command("find_mentors", async (ctx) => {
   await ctx.replyWithChatAction("typing");
@@ -30,7 +19,7 @@ filteredComposer.command("find_mentors", async (ctx) => {
   ctx.session.step = "gotName";
 });
 
-const router = new Router<MyContext>((ctx) => ctx.session.step);
+const router = new Router<Context>((ctx) => ctx.session.step);
 filteredComposer.use(selectSpecializationKeyboard);
 
 router.route("gotName", async (ctx) => {
@@ -61,7 +50,7 @@ router.route("gotYearsOfExperience", async (ctx) => {
   }
 });
 
-const displayMentorsMenu = new Menu<MyContext>("display-mentors")
+const displayMentorsMenu = new Menu<Context>("display-mentors")
   .text("Показать ещё", (ctx) => {
     ctx.session.step = "displayMentors";
   })
