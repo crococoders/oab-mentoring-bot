@@ -17,4 +17,4 @@ for (let index = 0; index < specializations.length; index += 1) {
   keyboard.row();
 }
 
-// specializations.map((item) => keyboard.text(item.name));
+specializations.map((item) => keyboard.text(item.name));

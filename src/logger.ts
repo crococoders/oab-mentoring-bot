@@ -1,8 +1,7 @@
 import pino, { Logger, LoggerOptions } from "pino";
 import pretty from "pino-pretty";
-
 import { config } from "@bot/config";
-import { context } from "@bot/context";
+import { middlewareContext } from "@bot/context";
 
 const options: LoggerOptions = {
   level: config.LOG_LEVEL,
@@ -25,7 +24,7 @@ if (config.isDev) {
 export const logger: Logger = new Proxy(rawLogger, {
   get(target, property, receiver) {
     // eslint-disable-next-line no-param-reassign
-    target = context.getStore()?.get("logger") || target;
+    target = middlewareContext.getStore()?.get("logger") || target;
     return Reflect.get(target, property, receiver);
   },
 });
