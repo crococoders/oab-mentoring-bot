@@ -5,31 +5,19 @@ const logMeta = {
   caller: "users.service",
 };
 
-export const findOrCreateByTelegramId = async (
-  telegramId: number,
-  data: {
-    languageCode?: string | null;
-  }
-) => {
+export const getMentors = async () => {
   logger.debug({
-    msg: "find or create user by telegram id",
-    telegramId,
-    data,
+    msg: "get mentors list",
     ...logMeta,
   });
 
-  const { languageCode } = data;
-
-  return prisma.user.upsert({
+  const mentors = await prisma.user.findMany({
     where: {
-      telegramId,
-    },
-    update: {},
-    create: {
-      telegramId,
-      languageCode,
+      type: "MENTOR",
     },
   });
+
+  return mentors;
 };
 
 export const updateByTelegramId = async (

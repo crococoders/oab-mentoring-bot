@@ -10,11 +10,39 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  telegramId   BigInt   @unique @map("telegram_id")
-  languageCode String?  @map("language_code")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id                Int      @id @default(autoincrement())
+  telegramId        BigInt   @unique @map("telegram_id")
+  languageCode      String?  @map("language_code")
+  name              String
+  specialization    Specialization 
+  type              Type
+  yearsOfExperience Int      @map("years_of_experience")
+  waitList          WaitList[]
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  createdAt         DateTime @default(now()) @map("created_at")
 
   @@map(name: "users")
+}
+
+enum Specialization {
+  BACKEND
+  FRONTEND
+  MOBILE
+  QA
+  DATASCIENCE
+  DESIGN
+  MANAGEMENT
+}
+
+enum Type {
+  MENTOR
+  MENTEE
+}
+
+model WaitList {
+  id   Int  @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@map(name: "wait_list")
 }
