@@ -1,6 +1,6 @@
 import { fluent, locales } from "@bot/helpers/i18n";
 
-export const DEFAULT_LANGUAGE_CODE = "en";
+export const DEFAULT_LANGUAGE_CODE = "ru";
 
 if (!locales.includes(DEFAULT_LANGUAGE_CODE)) {
   throw new Error(

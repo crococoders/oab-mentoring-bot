@@ -20,12 +20,12 @@ feature.use((ctx, next) => {
 });
 
 feature.do(async (ctx) => {
-  await ctx.reply(ctx.t("FILL_NAME"));
+  await ctx.reply(ctx.t("enter_name"));
 });
 
 feature.wait().on("message:text", async (ctx) => {
   console.log("Received name", ctx.message.text);
-  await ctx.reply(ctx.t("CHOOSE_SPECIALIZATION"), {
+  await ctx.reply(ctx.t("choose_specialization"), {
     reply_markup: selectSpecializationKeyboard,
   });
 
@@ -36,10 +36,10 @@ feature.wait().on(["callback_query:data", "message:text"], async (ctx) => {
   if (ctx.callbackQuery?.data !== undefined) {
     await ctx.answerCallbackQuery("Принято!");
     console.log("Received specialization", ctx.callbackQuery.data);
-    await ctx.reply(ctx.t("YEARS_OF_EXPERIENCE"));
+    await ctx.reply(ctx.t("enter_yoe"));
     ctx.scene.resume();
   } else {
-    await ctx.reply("Выбери одно из направлений нажав кнопку.");
+    await ctx.reply(ctx.t("enter_yoe"));
   }
 });
 
@@ -49,7 +49,7 @@ feature.wait().on("message:text", async (ctx) => {
     ctx.msg.text !== undefined &&
     !isNumber(ctx.msg.text!)
   ) {
-    await ctx.reply(ctx.t("YEARS_OF_EXPERIENCE_WRONG"));
+    await ctx.reply(ctx.t("yoe_validation_failed"));
   } else {
     ctx.scene.resume();
   }
@@ -70,11 +70,11 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
     );
 
     if (ctx.scene.session.mentorsPage > pagination.endPage) {
-      await ctx.reply(ctx.t("NO_MORE_MENTORS"));
+      await ctx.reply(ctx.t("no_matching_mentors"));
       return;
     }
 
-    await ctx.reply(ctx.t("BOT_FOUND_MENTORS"));
+    await ctx.reply(ctx.t("found_mentors"));
 
     const replies = ctx.scene.session.mentors
       .slice(pagination.startIndex, pagination.endIndex + 1)
@@ -88,11 +88,11 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
 
     await Promise.all(replies);
 
-    await ctx.reply(ctx.t("MENTORS_FOUND"), {
+    await ctx.reply(ctx.t("mentors_list_actions"), {
       reply_markup: mentorsListActionsKeyboard,
     });
   } else {
-    await ctx.reply(ctx.t("NO_MENTORS_FOUND"));
+    await ctx.reply(ctx.t("no_more_matching_mentors"));
   }
 };
 
@@ -102,7 +102,7 @@ feature.wait().on("callback_query:data", async (ctx) => {
   await ctx.answerCallbackQuery();
   console.log("Received action", ctx.callbackQuery.data);
   if (ctx.callbackQuery.data === "found") {
-    await ctx.reply(ctx.t("MENTORS_FINDING_CONFIRMED"));
+    await ctx.reply(ctx.t("mentors_finding_confirmed"));
     ctx.scene.exit();
   } else {
     await handler(ctx);
