@@ -20,38 +20,6 @@ export const getMentors = async () => {
   return mentors;
 };
 
-// NEED TO FIX!!
-export const findOrCreateByTelegramId = async (
-  telegramId: number,
-  data: {
-    languageCode?: string | null;
-  }
-) => {
-  logger.debug({
-    msg: "find or create user by telegram id",
-    telegramId,
-    data,
-    ...logMeta,
-  });
-
-  const { languageCode } = data;
-
-  return prisma.user.upsert({
-    where: {
-      telegramId,
-    },
-    update: {},
-    create: {
-      telegramId,
-      languageCode,
-      name: "",
-      specialization: "MOBILE",
-      yearsOfExperience: 0,
-      type: "MENTEE",
-    },
-  });
-};
-
 export const updateByTelegramId = async (
   telegramId: number,
   data: {

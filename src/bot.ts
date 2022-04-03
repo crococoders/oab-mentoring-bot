@@ -10,7 +10,6 @@ import {
   setupMiddlewareContext,
   setupLogger,
   setupI18n,
-  registerUser,
 } from "@bot/middlewares";
 import { start, scenes, languageSelect } from "@bot/features";
 import { isMultipleLocales } from "@bot/helpers/i18n";
@@ -33,7 +32,6 @@ bot.use(setupSession());
 bot.use(setupMiddlewareContext());
 bot.use(setupLogger());
 bot.use(setupI18n());
-bot.use(registerUser());
 
 // Features
 if (isMultipleLocales) {

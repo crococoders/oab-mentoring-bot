@@ -32,9 +32,11 @@ for (let index = 1; index <= locales.length; index += 1) {
       });
 
       if (locales.includes(newLanguageCode)) {
-        await usersService.updateByTelegramId(ctx.from.id, {
-          languageCode: newLanguageCode,
-        });
+        if (ctx.from?.language_code) {
+          await usersService.updateByTelegramId(ctx.from.id, {
+            languageCode: newLanguageCode,
+          });
+        }
         ctx.session.languageCode = newLanguageCode;
 
         await ctx.fluent.renegotiateLocale();
