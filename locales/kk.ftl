@@ -46,5 +46,5 @@ no_more_matching_mentors =
     Әзірше https://t.me/Nfng_bot - да менторды тауып көруді ұсынамыз. 
     
 language = 
-    .select = Пожалуйста, выбери язык
-    .changed = Успешно изменен!
+    .select = Тілді таңдаңыз
+    .changed = Дайын!
