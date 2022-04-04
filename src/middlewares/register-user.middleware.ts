@@ -11,7 +11,7 @@ export const middleware = () => async (ctx: Context, next: NextFunction) => {
   //   });
   //   const { id: telegramId, language_code: languageCode } = ctx.from;
 
-  //   ctx.user = await usersService.findOrCreateByTelegramId(telegramId, {
+  //   ctx.user = await usersService.updateByTelegramId(telegramId, {
   //     languageCode,
   //   });
   // }

@@ -27,7 +27,7 @@ feature.do(async (ctx) => {
 
 feature.wait().on("message:text", async (ctx) => {
   console.log("Received name", ctx.message.text);
-  await ctx.reply(ctx.t("choose_specialization"), {
+  await ctx.reply(ctx.t("enter_specialization"), {
     reply_markup: selectSpecializationKeyboard,
   });
 
@@ -42,7 +42,7 @@ feature.wait().on(["callback_query:data", "message:text"], async (ctx) => {
     await ctx.reply(ctx.t("enter_yoe"));
     ctx.scene.resume();
   } else {
-    await ctx.reply(ctx.t("enter_yoe"));
+    await ctx.reply(ctx.t("re_enter_specialization"));
   }
 });
 
