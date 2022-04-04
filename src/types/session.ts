@@ -2,12 +2,8 @@ import { Mentor } from "./mentor";
 
 export interface SessionState {
   languageCode?: string;
-  // step:
-  //   | "waiting"
-  //   | "gotName"
-  //   | "gotSpecialization"
-  //   | "gotYearsOfExperience"
-  //   | "displayMentors";
+  specialization: string;
+  yoe: number;
   mentors: Mentor[];
   mentorsPage: number;
 }

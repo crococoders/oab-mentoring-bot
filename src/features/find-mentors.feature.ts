@@ -15,6 +15,8 @@ feature.use((ctx, next) => {
   ctx.scene.session = {
     mentors: [],
     mentorsPage: 1,
+    specialization: "",
+    yoe: 0,
   };
   return next();
 });
@@ -35,6 +37,7 @@ feature.wait().on("message:text", async (ctx) => {
 feature.wait().on(["callback_query:data", "message:text"], async (ctx) => {
   if (ctx.callbackQuery?.data !== undefined) {
     await ctx.answerCallbackQuery("Принято!");
+    ctx.scene.session.specialization = ctx.callbackQuery.data;
     console.log("Received specialization", ctx.callbackQuery.data);
     await ctx.reply(ctx.t("enter_yoe"));
     ctx.scene.resume();
@@ -51,6 +54,8 @@ feature.wait().on("message:text", async (ctx) => {
   ) {
     await ctx.reply(ctx.t("yoe_validation_failed"));
   } else {
+    ctx.scene.session.yoe = +ctx.msg.text;
+    console.log("Received years of experience", ctx.msg.text);
     ctx.scene.resume();
   }
 });
