@@ -10,16 +10,16 @@ datasource db {
 }
 
 model User {
-  id                Int      @id @default(autoincrement())
-  telegramId        BigInt   @unique @map("telegram_id")
-  languageCode      String?  @map("language_code")
+  id                Int            @id @default(autoincrement())
+  telegramId        String         @unique @map("telegram_id")
+  languageCode      String?        @map("language_code")
   name              String
-  specialization    Specialization 
+  specialization    Specialization
   type              Type
-  yearsOfExperience Int      @map("years_of_experience")
+  yearsOfExperience Int            @map("years_of_experience")
   waitList          WaitList[]
-  updatedAt         DateTime @updatedAt @map("updated_at")
-  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
 
   @@map(name: "users")
 }
@@ -40,8 +40,8 @@ enum Type {
 }
 
 model WaitList {
-  id   Int  @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
   userId Int
 
   @@map(name: "wait_list")

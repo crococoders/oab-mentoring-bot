@@ -21,7 +21,7 @@ export const getMentors = async () => {
 };
 
 export const updateByTelegramId = async (
-  telegramId: number,
+  telegramId: string,
   data: {
     languageCode?: string | null;
   }

@@ -26,6 +26,21 @@ if (config.isDev) {
   bot.use(updatesLogger());
 }
 
+bot.api.setMyCommands([
+  {
+    command: "start",
+    description: "start",
+  },
+  {
+    command: "find_mentors",
+    description: "find_mentors",
+  },
+  {
+    command: "language",
+    description: "language",
+  },
+]);
+
 bot.use(rateLimit());
 bot.use(hydrateReply);
 bot.use(setupSession());
@@ -34,6 +49,7 @@ bot.use(setupLogger());
 bot.use(setupI18n());
 
 // Features
+
 if (isMultipleLocales) {
   bot.use(languageSelect);
 }
