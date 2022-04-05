@@ -1,13 +1,9 @@
+import { Filters } from "./filters";
 import { Mentor } from "./mentor";
 
 export interface SessionState {
   languageCode?: string;
-  // step:
-  //   | "waiting"
-  //   | "gotName"
-  //   | "gotSpecialization"
-  //   | "gotYearsOfExperience"
-  //   | "displayMentors";
+  filters: Filters;
   mentors: Mentor[];
   mentorsPage: number;
 }

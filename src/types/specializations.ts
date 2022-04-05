@@ -4,15 +4,16 @@ type Specialization = {
 };
 
 const specializations: Specialization[] = [
-  { name: "Backend разработка", key: "backend" },
-  { name: "Frontend разработка", key: "frontend" },
-  { name: "Мобильная разработка", key: "mobile" },
-  { name: "QA / Тестирование", key: "qa" },
-  { name: "Data Science", key: "datascience" },
-  { name: "UX / UI Design", key: "design" },
-  { name: "Product / Project Менеджмент", key: "management" },
+  { name: "Backend разработка", key: "BACKEND" },
+  { name: "Frontend разработка", key: "FRONTEND" },
+  { name: "Мобильная разработка", key: "MOBILE" },
+  { name: "QA / Тестирование", key: "QA" },
+  { name: "Data Science", key: "DATASCIENCE" },
+  { name: "UX / UI Design", key: "DESIGN" },
+  { name: "Product / Project Менеджмент", key: "MANAGEMENT" },
 ];
 
-const regexToMatchSpecializations = /backend|frontend|mobile|qa|ds|design|pm/;
+const regexToMatchSpecializations =
+  /BACKEND|FRONTEND|MOBILE|QA|DATASCIENCE|DESIGN|MANAGEMENT/;
 
 export { specializations, regexToMatchSpecializations, type Specialization };
