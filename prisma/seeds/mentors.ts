@@ -9,7 +9,7 @@ async function main() {
       specialization: "MOBILE",
       yearsOfExperience: 2,
       type: "MENTOR",
-      telegramId: 1,
+      telegramId: "1",
     },
   });
 
@@ -19,7 +19,7 @@ async function main() {
       specialization: "MOBILE",
       yearsOfExperience: 5,
       type: "MENTOR",
-      telegramId: 2,
+      telegramId: "2",
     },
   });
 }

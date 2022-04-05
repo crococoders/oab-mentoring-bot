@@ -1,9 +1,9 @@
+import { Filters } from "./filters";
 import { Mentor } from "./mentor";
 
 export interface SessionState {
   languageCode?: string;
-  specialization: string;
-  yoe: number;
+  filters: Filters;
   mentors: Mentor[];
   mentorsPage: number;
 }
