@@ -26,20 +26,28 @@ if (config.isDev) {
   bot.use(updatesLogger());
 }
 
-bot.api.setMyCommands([
-  {
-    command: "start",
-    description: "start",
-  },
-  {
-    command: "find_mentors",
-    description: "find_mentors",
-  },
-  {
-    command: "language",
-    description: "language",
-  },
-]);
+bot.api
+  .setMyCommands([
+    {
+      command: "start",
+      description: "start",
+    },
+    {
+      command: "find_mentors",
+      description: "find_mentors",
+    },
+    {
+      command: "register_as_mentor",
+      description: "register_as_mentor",
+    },
+    {
+      command: "language",
+      description: "language",
+    },
+  ])
+  .then(() => {
+    console.log("commands are set");
+  });
 
 bot.use(rateLimit());
 bot.use(hydrateReply);
@@ -59,6 +67,10 @@ bot.use(scenes.manager());
 
 bot.command("find_mentors", async (ctx) => {
   await ctx.scenes.enter("find_mentors");
+});
+
+bot.command("register_as_mentor", async (ctx) => {
+  await ctx.scenes.enter("register_as_mentor");
 });
 
 bot.use(scenes);

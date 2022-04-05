@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Specialization, Type } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -6,9 +6,9 @@ async function main() {
   const mara = await prisma.user.create({
     data: {
       name: "Марат Абылкаиров",
-      specialization: "MOBILE",
+      specialization: Specialization.MOBILE,
       yearsOfExperience: 2,
-      type: "MENTOR",
+      type: Type.MENTOR,
       telegramId: "1",
     },
   });
@@ -16,9 +16,9 @@ async function main() {
   const aidar = await prisma.user.create({
     data: {
       name: "Айдар Нугманов",
-      specialization: "MOBILE",
+      specialization: Specialization.MOBILE,
       yearsOfExperience: 5,
-      type: "MENTOR",
+      type: Type.MENTOR,
       telegramId: "2",
     },
   });
