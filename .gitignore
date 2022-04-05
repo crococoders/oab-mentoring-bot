@@ -132,3 +132,5 @@ db-data/
 
 *.env
 !*.example.*.env
+
+.idea/

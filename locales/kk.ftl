@@ -51,3 +51,8 @@ no_more_matching_mentors =
 language = 
     .select = Тілді таңдаңыз
     .changed = Дайын!
+
+register_as_mentor_fail=
+    😓Өкінішке орай, регистрация өтпедi :(
+
+
