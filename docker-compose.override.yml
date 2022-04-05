@@ -22,5 +22,16 @@ services:
       - docker-compose.dev.bot.env
     command: npm run dev
 
+  prisma-studio:
+    container_name: prisma-studio
+    image: timothyjmiller/prisma-studio:latest
+    restart: unless-stopped
+    env_file:
+      - docker-compose.dev.postgres.env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - postgres
+
 volumes:
   postgres-data-dev:
