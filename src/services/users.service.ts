@@ -9,7 +9,7 @@ const logMeta = {
 
 export const saveUser = async (userDTO: User) => {
   logger.debug({
-    msg: "db query: save user",
+    msg: "save user",
     ...logMeta,
   });
 

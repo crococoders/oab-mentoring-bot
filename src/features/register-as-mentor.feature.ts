@@ -69,7 +69,6 @@ const handler = async (ctx: SceneFlavoredContext<Context, User>) => {
   } catch (e) {
     console.error(e);
     await ctx.reply(ctx.t("register_as_mentor_fail"));
-  } finally {
     ctx.scene.exit();
   }
 };

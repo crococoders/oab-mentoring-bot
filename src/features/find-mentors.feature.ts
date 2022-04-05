@@ -8,6 +8,7 @@ import {
 import { isNumber } from "@bot/helpers/is-number";
 import { Specialization, Type } from "@prisma/client";
 import { getMentors, saveUser } from "@bot/services/users.service";
+import { addToWaitList } from "@bot/services/waitList.service";
 
 export const feature = new Scene<Context, SessionState>("find_mentors");
 
@@ -23,6 +24,7 @@ feature.use((ctx, next) => {
       type: Type.MENTEE,
       telegramId: ctx.from!.id.toString(),
     },
+    userId: -1,
   };
   return next();
 });
@@ -67,12 +69,12 @@ feature.wait().on("message:text", async (ctx) => {
 
     try {
       console.log("Saving user", ctx.scene.session.user);
-      await saveUser(ctx.scene.session.user);
+      const user = await saveUser(ctx.scene.session.user);
+      ctx.scene.session.userId = user.id;
     } catch (e) {
       console.error(e);
       // @TODO: Нужно поменять текст
       await ctx.reply(ctx.t("register_as_mentor_fail"));
-    } finally {
       ctx.scene.exit();
     }
 
@@ -117,8 +119,17 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
       reply_markup: mentorsListActionsKeyboard,
     });
   } else {
-    // waiting list
-    await ctx.reply(ctx.t("no_matching_mentors"));
+    try {
+      console.log("inside try ");
+
+      await addToWaitList(ctx.scene.session.userId);
+      await ctx.reply(ctx.t("no_matching_mentors"));
+    } catch (e) {
+      console.error(e);
+      // @TODO: Нужно поменять текст
+      await ctx.reply(ctx.t("register_as_mentor_fail"));
+      ctx.scene.exit();
+    }
   }
 };
 
@@ -132,6 +143,7 @@ feature.wait().on("callback_query:data", async (ctx) => {
     ctx.scene.exit();
   } else {
     // waiting list
+    await addToWaitList(ctx.scene.session.userId);
     await handler(ctx);
   }
 });
