@@ -81,7 +81,7 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
     );
 
     if (ctx.scene.session.mentorsPage > pagination.endPage) {
-      await ctx.reply(ctx.t("no_matching_mentors"));
+      await ctx.reply(ctx.t("no_more_matching_mentors"));
       return;
     }
 
@@ -103,7 +103,7 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
       reply_markup: mentorsListActionsKeyboard,
     });
   } else {
-    await ctx.reply(ctx.t("no_more_matching_mentors"));
+    await ctx.reply(ctx.t("no_matching_mentors"));
   }
 };
 
