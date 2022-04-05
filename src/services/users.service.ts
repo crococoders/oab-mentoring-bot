@@ -1,13 +1,14 @@
 import { logger } from "@bot/logger";
 import { prisma } from "@bot/prisma";
 import { Filters } from "@bot/types/filters";
-import { Specialization } from "@prisma/client";
+import { User } from "@bot/types/user";
+import { Specialization, Type } from "@prisma/client";
 
 const logMeta = {
   caller: "users.service",
 };
 
-export const getMentors = async (filters: Filters) => {
+export const getMentors = async (user: User) => {
   logger.debug({
     msg: "get mentors list",
     ...logMeta,
@@ -15,10 +16,17 @@ export const getMentors = async (filters: Filters) => {
 
   const mentors = await prisma.user.findMany({
     where: {
-      type: "MENTOR",
-      specialization: filters.specialization as Specialization,
+      OR: [
+        {
+          type: Type.MENTOR,
+        },
+        {
+          type: Type.BOTH,
+        },
+      ],
+      specialization: user.specialization,
       yearsOfExperience: {
-        gt: filters.yearsOfExperience,
+        gt: user.yearsOfExperience,
       },
     },
   });

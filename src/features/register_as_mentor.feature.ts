@@ -1,17 +1,17 @@
 import { Scene, SceneFlavoredContext } from "grammy-scenes";
-import { Context, Mentor } from "@bot/types";
+import { Context, User } from "@bot/types";
 import { PrismaClient, Specialization, Type } from "@prisma/client";
 import { selectSpecializationKeyboard } from "@bot/keyboards";
 import { isNumber } from "@bot/helpers/is-number";
 
 const prisma = new PrismaClient();
-export const feature = new Scene<Context, Mentor>("register_as_mentor");
+export const feature = new Scene<Context, User>("register_as_mentor");
 
 feature.use((ctx, next) => {
   console.log("Entering mentor registration scene...");
   ctx.scene.session = {
     name: "",
-    specialization: "",
+    specialization: Specialization.BACKEND,
     yearsOfExperience: 0,
   };
   return next();
@@ -35,7 +35,7 @@ feature.wait().on(["callback_query:data", "message:text"], async (ctx) => {
   if (ctx.callbackQuery?.data !== undefined) {
     await ctx.answerCallbackQuery("Принято!");
     console.log("Received specialization", ctx.callbackQuery.data);
-    ctx.session.specialization = ctx.callbackQuery.data;
+    ctx.session.specialization = ctx.callbackQuery.data as Specialization;
 
     await ctx.reply(ctx.t("enter_yoe"));
     ctx.scene.resume();
@@ -57,7 +57,7 @@ feature.wait().on("message:text", async (ctx) => {
   }
 });
 
-const handler = async (ctx: SceneFlavoredContext<Context, Mentor>) => {
+const handler = async (ctx: SceneFlavoredContext<Context, User>) => {
   const { name, yearsOfExperience, specialization } = ctx.session;
   const telegramId = ctx.from!.id.toString();
   try {

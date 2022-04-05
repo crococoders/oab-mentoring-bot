@@ -37,6 +37,7 @@ enum Specialization {
 enum Type {
   MENTOR
   MENTEE
+  BOTH
 }
 
 model WaitList {

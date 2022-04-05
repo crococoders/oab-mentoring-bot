@@ -1,12 +1,13 @@
 import { Scene, SceneFlavoredContext } from "grammy-scenes";
 import { Context, SessionState } from "@bot/types";
-import tryToFindMentors from "@bot/helpers/try-to-find-mentors";
 import paginate from "@bot/helpers/pagination";
 import {
   mentorsListActionsKeyboard,
   selectSpecializationKeyboard,
 } from "@bot/keyboards";
 import { isNumber } from "@bot/helpers/is-number";
+import { Specialization } from "@prisma/client";
+import { getMentors } from "@bot/services/users.service";
 
 export const feature = new Scene<Context, SessionState>("find_mentors");
 
@@ -15,8 +16,9 @@ feature.use((ctx, next) => {
   ctx.scene.session = {
     mentors: [],
     mentorsPage: 1,
-    filters: {
-      specialization: "",
+    user: {
+      name: "",
+      specialization: Specialization.BACKEND,
       yearsOfExperience: 0,
     },
   };
@@ -29,6 +31,7 @@ feature.do(async (ctx) => {
 
 feature.wait().on("message:text", async (ctx) => {
   console.log("Received name", ctx.message.text);
+  ctx.scene.session.user.name = ctx.message.text;
   await ctx.reply(ctx.t("enter_specialization"), {
     reply_markup: selectSpecializationKeyboard,
   });
@@ -39,7 +42,8 @@ feature.wait().on("message:text", async (ctx) => {
 feature.wait().on(["callback_query:data", "message:text"], async (ctx) => {
   if (ctx.callbackQuery?.data !== undefined) {
     await ctx.answerCallbackQuery("Принято!");
-    ctx.scene.session.filters.specialization = ctx.callbackQuery.data;
+    ctx.scene.session.user.specialization = ctx.callbackQuery
+      .data as Specialization;
     console.log("Received specialization", ctx.callbackQuery.data);
     await ctx.reply(ctx.t("enter_yoe"));
     ctx.scene.resume();
@@ -56,7 +60,7 @@ feature.wait().on("message:text", async (ctx) => {
   ) {
     await ctx.reply(ctx.t("yoe_validation_failed"));
   } else {
-    ctx.scene.session.filters.yearsOfExperience = +ctx.msg.text;
+    ctx.scene.session.user.yearsOfExperience = +ctx.msg.text;
     console.log("Received years of experience", ctx.msg.text);
     ctx.scene.resume();
   }
@@ -64,7 +68,7 @@ feature.wait().on("message:text", async (ctx) => {
 
 const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
   if (!ctx.scene.session.mentors || ctx.scene.session.mentors.length === 0) {
-    const mentors = await tryToFindMentors(ctx.scene.session.filters);
+    const mentors = await getMentors(ctx.scene.session.user);
     ctx.scene.session.mentors = mentors;
     ctx.scene.session.mentorsPage = 1;
   }
