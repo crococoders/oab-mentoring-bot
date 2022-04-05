@@ -6,8 +6,8 @@ import {
   selectSpecializationKeyboard,
 } from "@bot/keyboards";
 import { isNumber } from "@bot/helpers/is-number";
-import { Specialization } from "@prisma/client";
-import { getMentors } from "@bot/services/users.service";
+import { Specialization, Type } from "@prisma/client";
+import { getMentors, saveUser } from "@bot/services/users.service";
 
 export const feature = new Scene<Context, SessionState>("find_mentors");
 
@@ -20,6 +20,8 @@ feature.use((ctx, next) => {
       name: "",
       specialization: Specialization.BACKEND,
       yearsOfExperience: 0,
+      type: Type.MENTEE,
+      telegramId: ctx.from!.id.toString(),
     },
   };
   return next();
@@ -60,8 +62,20 @@ feature.wait().on("message:text", async (ctx) => {
   ) {
     await ctx.reply(ctx.t("yoe_validation_failed"));
   } else {
-    ctx.scene.session.user.yearsOfExperience = +ctx.msg.text;
     console.log("Received years of experience", ctx.msg.text);
+    ctx.scene.session.user.yearsOfExperience = +ctx.msg.text;
+
+    try {
+      console.log("Saving user", ctx.scene.session.user);
+      await saveUser(ctx.scene.session.user);
+    } catch (e) {
+      console.error(e);
+      // @TODO: Нужно поменять текст
+      await ctx.reply(ctx.t("register_as_mentor_fail"));
+    } finally {
+      ctx.scene.exit();
+    }
+
     ctx.scene.resume();
   }
 });
@@ -103,6 +117,7 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
       reply_markup: mentorsListActionsKeyboard,
     });
   } else {
+    // waiting list
     await ctx.reply(ctx.t("no_matching_mentors"));
   }
 };
@@ -116,6 +131,7 @@ feature.wait().on("callback_query:data", async (ctx) => {
     await ctx.reply(ctx.t("mentors_finding_confirmed"));
     ctx.scene.exit();
   } else {
+    // waiting list
     await handler(ctx);
   }
 });
