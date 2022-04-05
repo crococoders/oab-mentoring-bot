@@ -8,7 +8,10 @@ import {
 import { isNumber } from "@bot/helpers/is-number";
 import { Specialization, Type } from "@prisma/client";
 import { getMentors, saveUser } from "@bot/services/users.service";
-import { addToWaitList } from "@bot/services/waitList.service";
+import {
+  addToWaitList,
+  removeFromWaitList,
+} from "@bot/services/waitList.service";
 
 export const feature = new Scene<Context, SessionState>("find_mentors");
 
@@ -140,6 +143,7 @@ feature.wait().on("callback_query:data", async (ctx) => {
   console.log("Received action", ctx.callbackQuery.data);
   if (ctx.callbackQuery.data === "found") {
     await ctx.reply(ctx.t("mentors_finding_confirmed"));
+    await removeFromWaitList(ctx.scene.session.userId);
     ctx.scene.exit();
   } else {
     // waiting list

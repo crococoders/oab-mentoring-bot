@@ -4,6 +4,7 @@ import { Specialization, Type } from "@prisma/client";
 import { selectSpecializationKeyboard } from "@bot/keyboards";
 import { isNumber } from "@bot/helpers/is-number";
 import { saveUser } from "@bot/services/users.service";
+import { getWaitingMentees } from "@bot/services/waitList.service";
 
 export const feature = new Scene<Context, User>("register_as_mentor");
 
@@ -61,11 +62,18 @@ feature.wait().on("message:text", async (ctx) => {
 
 const handler = async (ctx: SceneFlavoredContext<Context, User>) => {
   try {
-    await saveUser(ctx.scene.session);
+    const mentor = await saveUser(ctx.scene.session);
     await ctx.reply(
       `👤 ${ctx.scene.session.name}\nОпыт: ${ctx.scene.session.yearsOfExperience} года`
     );
     await ctx.reply(ctx.t("mentors_finding_confirmed"));
+    const mentees = await getWaitingMentees(mentor);
+    mentees.forEach(async (mentee) => {
+      await ctx.api.sendMessage(
+        mentee.user.telegramId,
+        "zaidi prover' dalbvaeb"
+      );
+    });
   } catch (e) {
     console.error(e);
     await ctx.reply(ctx.t("register_as_mentor_fail"));
