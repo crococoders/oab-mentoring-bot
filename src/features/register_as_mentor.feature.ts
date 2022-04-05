@@ -77,7 +77,6 @@ const handler = async (ctx: SceneFlavoredContext<Context, Mentor>) => {
     await ctx.reply(ctx.t("mentors_finding_confirmed"));
   } catch (e) {
     console.error(e);
-    process.exit(1);
     await ctx.reply(ctx.t("register_as_mentor_fail"));
   } finally {
     await prisma.$disconnect();
