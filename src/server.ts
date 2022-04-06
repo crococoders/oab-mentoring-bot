@@ -1,5 +1,5 @@
 import fastify from "fastify";
-import gracefulShutdown from "fastify-graceful-shutdown";
+// import gracefulShutdown from "fastify-graceful-shutdown";
 import { BotError, webhookCallback } from "grammy";
 import { register } from "prom-client";
 
@@ -7,18 +7,18 @@ import { bot } from "@bot/bot";
 import { config } from "@bot/config";
 import { logger } from "@bot/logger";
 import { handleError } from "@bot/helpers/error-handler";
-import { handleGracefulShutdown } from "@bot/helpers/graceful-shutdown-handler";
+// import { handleGracefulShutdown } from "@bot/helpers/graceful-shutdown-handler";
 
 export const server = fastify({
   logger,
 });
 
-server.register(gracefulShutdown).after(() => {
-  server.gracefulShutdown(async (signal, next) => {
-    await handleGracefulShutdown();
-    next();
-  });
-});
+// server.register(gracefulShutdown).after(() => {
+//   server.gracefulShutdown(async (signal, next) => {
+//     await handleGracefulShutdown();
+//     next();
+//   });
+// });
 
 server.setErrorHandler(async (error, request, response) => {
   if (error instanceof BotError) {
