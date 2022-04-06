@@ -1,4 +1,3 @@
-export { Context } from "./context";
-export { SessionState } from "./session";
+export { BotContext } from "./context";
 export { specializations } from "./specializations";
 export { User } from "./user";

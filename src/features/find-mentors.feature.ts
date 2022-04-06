@@ -1,92 +1,72 @@
 import { Scene, SceneFlavoredContext } from "grammy-scenes";
-import { Context, SessionState } from "@bot/types";
+import { BotContext, User } from "@bot/types";
 import paginate from "@bot/helpers/pagination";
-import {
-  mentorsListActionsKeyboard,
-  selectSpecializationKeyboard,
-} from "@bot/keyboards";
-import { isNumber } from "@bot/helpers/is-number";
-import { Specialization, Type } from "@prisma/client";
+import { mentorsListActionsKeyboard } from "@bot/keyboards";
 import { getMentors, saveUser } from "@bot/services/users.service";
 import {
   addToWaitList,
   removeFromWaitList,
 } from "@bot/services/waitList.service";
+import { logger } from "@bot/logger";
+import { Type } from "@prisma/client";
 
-export const feature = new Scene<Context, SessionState>("find_mentors");
+const logContext = {
+  caller: "findMentors.feature",
+};
+
+interface FindMentorsSession {
+  user?: User;
+  userId: number;
+  mentors: User[];
+  mentorsPage: number;
+}
+
+export const feature = new Scene<BotContext, FindMentorsSession>(
+  "find_mentors"
+);
+
+const isUserInSession = false;
 
 feature.use((ctx, next) => {
-  console.log("Entering main scene...");
+  logger.info({
+    msg: "entering scene",
+    ...logContext,
+  });
+
+  if (!isUserInSession) {
+    ctx.scene.call("profile", Type.MENTEE);
+  }
   ctx.scene.session = {
     mentors: [],
     mentorsPage: 1,
-    user: {
-      name: "",
-      specialization: Specialization.BACKEND,
-      yearsOfExperience: 0,
-      type: Type.MENTEE,
-      telegramId: ctx.from!.id.toString(),
-    },
     userId: -1,
   };
   return next();
 });
 
-feature.do(async (ctx) => {
-  await ctx.reply(ctx.t("enter_name"));
-});
-
-feature.wait().on("message:text", async (ctx) => {
-  console.log("Received name", ctx.message.text);
-  ctx.scene.session.user.name = ctx.message.text;
-  await ctx.reply(ctx.t("enter_specialization"), {
-    reply_markup: selectSpecializationKeyboard,
-  });
-
-  ctx.scene.resume();
-});
-
-feature.wait().on(["callback_query:data", "message:text"], async (ctx) => {
-  if (ctx.callbackQuery?.data !== undefined) {
-    await ctx.answerCallbackQuery("Принято!");
-    ctx.scene.session.user.specialization = ctx.callbackQuery
-      .data as Specialization;
-    console.log("Received specialization", ctx.callbackQuery.data);
-    await ctx.reply(ctx.t("enter_yoe"));
-    ctx.scene.resume();
-  } else {
-    await ctx.reply(ctx.t("re_enter_specialization"));
+feature.do(async (ctx, next) => {
+  try {
+    const user = ctx.scene.arg;
+    console.log("Saving user", user);
+    const savedUser = await saveUser(user);
+    ctx.scene.session.user = user;
+    ctx.scene.session.userId = savedUser.id;
+    return next();
+  } catch (e) {
+    console.error(e);
+    // @TODO: Нужно поменять текст
+    await ctx.reply(ctx.t("register_as_mentor_fail"));
+    return ctx.scene.exit();
   }
 });
 
-feature.wait().on("message:text", async (ctx) => {
+const displayMentorsList = async (
+  ctx: SceneFlavoredContext<BotContext, FindMentorsSession>
+) => {
   if (
-    ctx.msg !== undefined &&
-    ctx.msg.text !== undefined &&
-    !isNumber(ctx.msg.text!)
+    ctx.scene.session.user &&
+    (!ctx.scene.session.mentors || ctx.scene.session.mentors.length === 0)
   ) {
-    await ctx.reply(ctx.t("yoe_validation_failed"));
-  } else {
-    console.log("Received years of experience", ctx.msg.text);
-    ctx.scene.session.user.yearsOfExperience = +ctx.msg.text;
-
-    try {
-      console.log("Saving user", ctx.scene.session.user);
-      const user = await saveUser(ctx.scene.session.user);
-      ctx.scene.session.userId = user.id;
-    } catch (e) {
-      console.error(e);
-      // @TODO: Нужно поменять текст
-      await ctx.reply(ctx.t("register_as_mentor_fail"));
-      ctx.scene.exit();
-    }
-
-    ctx.scene.resume();
-  }
-});
-
-const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
-  if (!ctx.scene.session.mentors || ctx.scene.session.mentors.length === 0) {
     const mentors = await getMentors(ctx.scene.session.user);
     ctx.scene.session.mentors = mentors;
     ctx.scene.session.mentorsPage = 1;
@@ -108,7 +88,7 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
 
     const replies = ctx.scene.session.mentors
       .slice(pagination.startIndex, pagination.endIndex + 1)
-      .map((mentor: any) => {
+      .map((mentor: User) => {
         return ctx.reply(
           `👤 ${mentor.name}\nОпыт: ${mentor.yearsOfExperience} года`
         );
@@ -123,8 +103,6 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
     });
   } else {
     try {
-      console.log("inside try ");
-
       await addToWaitList(ctx.scene.session.userId);
       await ctx.reply(ctx.t("no_matching_mentors"));
     } catch (e) {
@@ -136,7 +114,7 @@ const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
   }
 };
 
-feature.do(handler);
+feature.do(displayMentorsList);
 
 feature.wait().on("callback_query:data", async (ctx) => {
   await ctx.answerCallbackQuery();
@@ -148,6 +126,6 @@ feature.wait().on("callback_query:data", async (ctx) => {
   } else {
     // waiting list
     await addToWaitList(ctx.scene.session.userId);
-    await handler(ctx);
+    await displayMentorsList(ctx);
   }
 });

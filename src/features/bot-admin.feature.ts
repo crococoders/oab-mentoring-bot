@@ -1,7 +1,7 @@
 import { Composer } from "grammy";
 import { isPrivate, isUserId } from "grammy-guard";
 
-import { Context } from "@bot/types";
+import { BotContext } from "@bot/types";
 import { usersService } from "@bot/services";
 import { logger } from "@bot/logger";
 import { config } from "@bot/config";
@@ -13,7 +13,7 @@ import {
 import { isMultipleLocales, locales } from "@bot/helpers/i18n";
 import { getMetadata } from "@bot/helpers/logging";
 
-export const feature = new Composer<Context>();
+export const feature = new Composer<BotContext>();
 
 const filteredComposer = feature
   .filter(isPrivate)

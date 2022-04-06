@@ -2,7 +2,7 @@ import { Bot } from "grammy";
 import { limit as rateLimit } from "@grammyjs/ratelimiter";
 import { apiThrottler } from "@grammyjs/transformer-throttler";
 import { hydrateReply, parseMode } from "parse-mode";
-import { Context } from "@bot/types";
+import { BotContext } from "@bot/types";
 import { config } from "@bot/config";
 import {
   updatesLogger,
@@ -15,7 +15,7 @@ import { start, scenes, languageSelect } from "@bot/features";
 import { isMultipleLocales } from "@bot/helpers/i18n";
 import { handleError } from "@bot/helpers/error-handler";
 
-export const bot = new Bot<Context>(config.BOT_TOKEN);
+export const bot = new Bot<BotContext>(config.BOT_TOKEN);
 
 // Middleware
 

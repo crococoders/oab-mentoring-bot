@@ -1,14 +1,14 @@
 import ISO6391 from "iso-639-1";
 import { Menu } from "@grammyjs/menu";
 
-import { Context } from "@bot/types";
+import { BotContext } from "@bot/types";
 import { usersService } from "@bot/services";
 import { logger } from "@bot/logger";
 import { locales } from "@bot/helpers/i18n";
 import { getMetadata } from "@bot/helpers/logging";
 import { capitalizeFirstLetter } from "@bot/helpers/capitalize-first-letter";
 
-export const keyboard = new Menu<Context>("language");
+export const keyboard = new Menu<BotContext>("language");
 
 for (let index = 1; index <= locales.length; index += 1) {
   const code = locales[index - 1];
