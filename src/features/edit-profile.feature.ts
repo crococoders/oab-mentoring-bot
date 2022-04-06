@@ -30,7 +30,8 @@ feature.do(async (ctx) => {
     const user = ctx.scene.arg;
     await saveUser(user);
     await ctx.reply(`👤 ${user.name}\nОпыт: ${user.yearsOfExperience} года`);
-    await ctx.reply(ctx.t("Профиль успешно обновлён!"));
+    // @TODO: Локализация
+    await ctx.reply("Профиль успешно обновлён!");
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);
