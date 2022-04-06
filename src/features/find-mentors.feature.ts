@@ -34,7 +34,7 @@ feature.use((ctx, next) => {
   });
 
   if (!isUserInSession) {
-    ctx.scene.call("profile", Type.MENTEE);
+    ctx.scene.call("fill_profile", Type.MENTEE);
   }
   ctx.scene.session = {
     mentors: [],
@@ -90,6 +90,7 @@ const displayMentorsList = async (
       .slice(pagination.startIndex, pagination.endIndex + 1)
       .map((mentor: User) => {
         return ctx.reply(
+          // @TODO: Надо перевести
           `👤 ${mentor.name}\nОпыт: ${mentor.yearsOfExperience} года`
         );
       });

@@ -5,10 +5,10 @@ import { selectSpecializationKeyboard } from "@bot/keyboards";
 import { isNumber } from "@bot/helpers/is-number";
 import { logger } from "@bot/logger";
 
-export const feature = new Scene<BotContext, User>("profile");
+export const feature = new Scene<BotContext, User>("fill_profile");
 
 const logContext = {
-  caller: "profile.feature",
+  caller: "fill-profile.feature",
 };
 
 feature.use((ctx, next) => {

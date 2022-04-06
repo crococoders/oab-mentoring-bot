@@ -37,6 +37,10 @@ bot.api
       description: "find_mentors",
     },
     {
+      command: "edit_profile",
+      description: "edit_profile",
+    },
+    {
       command: "register_as_mentor",
       description: "register_as_mentor",
     },
@@ -71,6 +75,10 @@ bot.command("find_mentors", async (ctx) => {
 
 bot.command("register_as_mentor", async (ctx) => {
   await ctx.scenes.enter("register_as_mentor");
+});
+
+bot.command("edit_profile", async (ctx) => {
+  await ctx.scenes.enter("edit_profile");
 });
 
 bot.use(scenes);

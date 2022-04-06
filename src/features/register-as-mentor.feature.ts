@@ -20,7 +20,7 @@ feature.use((ctx, next) => {
   });
 
   if (!isUserInSession) {
-    ctx.scene.call("profile", Type.MENTOR);
+    ctx.scene.call("fill_profile", Type.MENTOR);
   }
 
   return next();
