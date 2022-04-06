@@ -13,9 +13,7 @@ export const server = fastify({
   logger,
 });
 
-server.register(gracefulShutdown);
-
-server.after(() => {
+server.register(gracefulShutdown).after(() => {
   server.gracefulShutdown(async (signal, next) => {
     await handleGracefulShutdown();
     next();
