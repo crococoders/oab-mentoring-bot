@@ -40,7 +40,7 @@ bot.api
     },
     {
       command: "register_as_mentor",
-      description: "Зарегестрироваться как ментор / Ментор ретінде тіркелу",
+      description: "Зарегистрироваться как ментор / Ментор ретінде тіркелу",
     },
     {
       command: "edit_profile",
