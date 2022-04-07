@@ -1,12 +1,12 @@
 import { Composer } from "grammy";
 import { isPrivate } from "grammy-guard";
 
-import { Context } from "@bot/types";
+import { BotContext } from "@bot/types";
 import { logger } from "@bot/logger";
 import { selectLanguageKeyboard } from "@bot/keyboards";
 import { getMetadata } from "@bot/helpers/logging";
 
-export const feature = new Composer<Context>().filter(isPrivate);
+export const feature = new Composer<BotContext>().filter(isPrivate);
 
 feature.use(selectLanguageKeyboard);
 

@@ -1,9 +1,9 @@
 import { NextFunction } from "grammy";
-import { Context } from "@bot/types";
+import { BotContext } from "@bot/types";
 import { usersService } from "@bot/services";
 import { logger } from "@bot/logger";
 
-export const middleware = () => async (ctx: Context, next: NextFunction) => {
+export const middleware = () => async (ctx: BotContext, next: NextFunction) => {
   // if (ctx.from?.is_bot === false) {
   //   logger.info({
   //     msg: "trying to register a user",

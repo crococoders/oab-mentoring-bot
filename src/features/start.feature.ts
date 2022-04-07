@@ -1,8 +1,8 @@
 import { Composer } from "grammy";
 import { isPrivate } from "grammy-guard";
-import { Context } from "@bot/types";
+import { BotContext } from "@bot/types";
 
-export const feature = new Composer<Context>().filter(isPrivate);
+export const feature = new Composer<BotContext>().filter(isPrivate);
 
 feature.command("start", async (ctx) => {
   // logger.info({ msg: "handle start command", ...getMetadata(ctx) });
