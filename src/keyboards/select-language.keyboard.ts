@@ -20,7 +20,7 @@ for (let index = 1; index <= locales.length; index += 1) {
           (ctx.session?.languageCode || ctx.from?.language_code) === code;
 
         return `${isActivated ? "✅ " : ""}${capitalizeFirstLetter(
-          ISO6391.getNativeName(code)
+          code === "kk.latin" ? "Qazaq tili" : ISO6391.getNativeName(code)
         )}`;
       },
       payload: code,
