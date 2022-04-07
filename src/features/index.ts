@@ -9,6 +9,7 @@ import { feature as registerAsMentor } from "./register-as-mentor.feature";
 export { feature as botAdmin } from "./bot-admin.feature";
 export { feature as languageSelect } from "./language-select.feature";
 export { feature as start } from "./start.feature";
+export { feature as setAvailability } from "./set-availability.feature";
 
 export const scenes = new ScenesComposer<BotContext>();
 scenes.scene(findMentors);

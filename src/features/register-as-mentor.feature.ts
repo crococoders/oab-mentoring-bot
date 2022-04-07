@@ -1,6 +1,6 @@
 import { Scene } from "grammy-scenes";
 import { BotContext } from "@bot/types";
-import { Type } from "@prisma/client";
+import { Availability, Type } from "@prisma/client";
 import { saveUser } from "@bot/services/users.service";
 import { getWaitingMentees } from "@bot/services/waitList.service";
 import { logger } from "@bot/logger";
@@ -32,9 +32,12 @@ feature.do(async (ctx) => {
     arg: ctx.scene.arg,
     ...logContext,
   });
-  const user = ctx.scene.arg;
+
+  const user = { ...ctx.scene.arg, availability: Availability.AVAILABLE };
   try {
     const mentor = await saveUser(user);
+    ctx.session.availability = Availability.AVAILABLE;
+
     await ctx.reply(`👤 ${user.name}\nОпыт: ${user.yearsOfExperience} года`);
     await ctx.reply(ctx.t("mentors_finding_confirmed"));
     const mentees = await getWaitingMentees(mentor);

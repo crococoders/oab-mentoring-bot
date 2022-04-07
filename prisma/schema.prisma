@@ -16,6 +16,7 @@ model User {
   name              String
   specialization    Specialization
   type              Type
+  availability      Availability?
   yearsOfExperience Int            @map("years_of_experience")
   waitList          WaitList[]
   updatedAt         DateTime       @updatedAt @map("updated_at")
@@ -38,6 +39,11 @@ enum Type {
   MENTOR
   MENTEE
   BOTH
+}
+
+enum Availability {
+  AVAILABLE
+  UNAVAILABLE
 }
 
 model WaitList {

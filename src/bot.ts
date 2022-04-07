@@ -12,7 +12,7 @@ import {
   setupI18n,
   setDefaultLanguage,
 } from "@bot/middlewares";
-import { start, scenes, languageSelect } from "@bot/features";
+import { start, scenes, languageSelect, setAvailability } from "@bot/features";
 import { isMultipleLocales } from "@bot/helpers/i18n";
 import { handleError } from "@bot/helpers/error-handler";
 
@@ -70,6 +70,7 @@ if (isMultipleLocales) {
 
 bot.use(start);
 bot.use(scenes.manager());
+bot.use(setAvailability);
 
 bot.command("find_mentors", async (ctx) => {
   await ctx.scenes.enter("find_mentors");

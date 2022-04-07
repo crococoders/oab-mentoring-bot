@@ -53,3 +53,13 @@ language =
     .changed = Успешно изменен!
 
 register_as_mentor_fail = Прости но регистрация не прошла:(  Попробуй снова!
+
+change_availability = 
+    .action = Изменить занятость
+    .success = Занятость успешно изменена
+    .fail = Ошибка! Попробуйте еще, пожалуйстa
+    .command_fail = Эта команда доступна только менторам. 
+    Если вы хотите попробовать себя в качестве ментора, нажмите /register_as_mentor
+
+mentor_available = Доступен
+mentor_unavailable = Недоступен

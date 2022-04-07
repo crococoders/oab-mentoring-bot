@@ -1,10 +1,29 @@
 import { logger } from "@bot/logger";
 import { prisma } from "@bot/prisma";
 import { User } from "@bot/types/user";
-import { Type } from "@prisma/client";
+import { Availability, Type } from "@prisma/client";
 
 const logMeta = {
   caller: "users.service",
+};
+
+export const updateAvailability = async (
+  telegramId: string,
+  availability?: Availability
+) => {
+  logger.debug({
+    msg: "set availability",
+    ...logMeta,
+  });
+
+  return prisma.user.update({
+    where: {
+      telegramId,
+    },
+    data: {
+      availability,
+    },
+  });
 };
 
 export const saveUser = async (userDTO: User) => {

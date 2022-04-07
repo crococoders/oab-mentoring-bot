@@ -1,4 +1,4 @@
-import { Specialization, Type } from "@prisma/client";
+import { Specialization, Type, Availability } from "@prisma/client";
 
 interface User {
   name: string;
@@ -6,6 +6,7 @@ interface User {
   yearsOfExperience: number;
   type: Type;
   telegramId: string;
+  availability?: Availability | null;
 }
 
 export { User };
