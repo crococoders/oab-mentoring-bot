@@ -1,6 +1,6 @@
 import { Scene } from "grammy-scenes";
 import { BotContext } from "@bot/types";
-import { Availability, Type } from "@prisma/client";
+import { Type } from "@prisma/client";
 import { saveUser } from "@bot/services/users.service";
 import { getWaitingMentees } from "@bot/services/waitList.service";
 import { logger } from "@bot/logger";
