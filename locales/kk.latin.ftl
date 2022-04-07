@@ -5,7 +5,7 @@ language_command =
 
 welcome =
     Sälem!👋🏼
-    Men mentorlıq botpın, meniń mindetim - mentor men menti bir-birin tabıwğa kömektesiw. Mentordı tabıw ucin /find_mentors nusqaıwın basınız.
+    Men mentorlıq botpın, meniń mindetim - mentor men menti bir-birin tabıwğa kömektesiw. Mentordı tabıw ucin /find_mentors nusqawın basınız.
 
     Eger mäzirge oralğıńız kelse, /start nusqawın basınız (progress joğaladı).
 
