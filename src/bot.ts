@@ -39,12 +39,16 @@ bot.api
       description: "Найти ментора / Менторды табу",
     },
     {
+      command: "register_as_mentor",
+      description: "Зарегестрироваться как ментор / Ментор ретінде тіркелу",
+    },
+    {
       command: "edit_profile",
       description: "Изменить профиль / Профильді өзгерту",
     },
     {
-      command: "register_as_mentor",
-      description: "Зарегестрироваться как ментор / Ментор ретінде тіркелу",
+      command: "set_availability",
+      description: "Указать доступность / Қолжетімділіктi белгілеу",
     },
     {
       command: "language",
