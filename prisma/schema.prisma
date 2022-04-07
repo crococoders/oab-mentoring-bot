@@ -12,11 +12,10 @@ datasource db {
 model User {
   id                Int            @id @default(autoincrement())
   telegramId        String         @unique @map("telegram_id")
-  languageCode      String?        @map("language_code")
   name              String
   specialization    Specialization
   type              Type
-  availability      Availability?
+  availability      Availability   @default(AVAILABLE)
   yearsOfExperience Int            @map("years_of_experience")
   waitList          WaitList[]
   updatedAt         DateTime       @updatedAt @map("updated_at")

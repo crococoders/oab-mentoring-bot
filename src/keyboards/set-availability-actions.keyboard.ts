@@ -15,7 +15,7 @@ for (let index = 0; index < availabilities.length; index += 1) {
   keyboard.text(
     (ctx) => {
       return `${
-        ctx.session.availability === availabilities[index].key
+        ctx.session.user!.availability === availabilities[index].key
           ? availabilities[index].icon
           : ""
       } ${ctx.t(availabilities[index].name)}`;
@@ -27,7 +27,7 @@ for (let index = 0; index < availabilities.length; index += 1) {
           telegramId,
           availabilities[index].key
         );
-        ctx.session.availability = updatedUser.availability;
+        ctx.session.user!.availability = updatedUser.availability;
 
         await ctx.editMessageText(ctx.t("change_availability.success"), {
           reply_markup: keyboard,

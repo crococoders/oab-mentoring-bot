@@ -2,7 +2,6 @@ import ISO6391 from "iso-639-1";
 import { Menu } from "@grammyjs/menu";
 
 import { BotContext } from "@bot/types";
-import { usersService } from "@bot/services";
 import { logger } from "@bot/logger";
 import { locales } from "@bot/helpers/i18n";
 import { getMetadata } from "@bot/helpers/logging";
@@ -35,11 +34,6 @@ for (let index = 1; index <= locales.length; index += 1) {
       });
 
       if (locales.includes(newLanguageCode)) {
-        if (ctx.from?.language_code) {
-          await usersService.updateByTelegramId(ctx.from.id.toString(), {
-            languageCode: newLanguageCode,
-          });
-        }
         ctx.session.languageCode = newLanguageCode;
 
         await ctx.fluent.renegotiateLocale();

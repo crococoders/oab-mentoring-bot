@@ -102,28 +102,3 @@ export const getMentors = async (user: User) => {
 
   return mentors;
 };
-
-export const updateByTelegramId = async (
-  telegramId: string,
-  data: {
-    languageCode?: string | null;
-  }
-) => {
-  logger.debug({
-    msg: "update user by telegram id",
-    telegramId,
-    data,
-    ...logMeta,
-  });
-
-  const { languageCode } = data;
-
-  return prisma.user.update({
-    where: {
-      telegramId,
-    },
-    data: {
-      languageCode,
-    },
-  });
-};

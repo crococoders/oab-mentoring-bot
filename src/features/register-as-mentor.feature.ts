@@ -35,21 +35,17 @@ feature.do(async (ctx) => {
       user: ctx.scene.arg,
       ...logContext,
     });
-    user = { ...ctx.scene.arg, availability: Availability.AVAILABLE };
-    // user = ctx.scene.arg;
+    user = ctx.scene.arg;
   } else {
     logger.info({
       msg: "user comes from session",
       user: ctx.session.user,
       ...logContext,
     });
-    user = { ...ctx.session.user, availability: Availability.AVAILABLE };
-    // user = ctx.session.user;
+    user = ctx.session.user;
   }
   try {
     const mentor = await saveUser(user);
-    // Не забываем обновить юзера в кэше
-    ctx.session.availability = Availability.AVAILABLE;
     ctx.session.user = mentor;
     await ctx.reply(
       `👤 ${mentor.name}\nОпыт: ${mentor.yearsOfExperience} года`
