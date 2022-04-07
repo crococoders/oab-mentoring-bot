@@ -10,6 +10,7 @@ import {
   setupMiddlewareContext,
   setupLogger,
   setupI18n,
+  setDefaultLanguage,
 } from "@bot/middlewares";
 import { start, scenes, languageSelect } from "@bot/features";
 import { isMultipleLocales } from "@bot/helpers/i18n";
@@ -30,23 +31,23 @@ bot.api
   .setMyCommands([
     {
       command: "start",
-      description: "start",
+      description: "Начать / Жалғастыру",
     },
     {
       command: "find_mentors",
-      description: "find_mentors",
+      description: "Найти ментора / Менторды табу",
     },
     {
       command: "edit_profile",
-      description: "edit_profile",
+      description: "Изменить профиль / Профильді өзгерту",
     },
     {
       command: "register_as_mentor",
-      description: "register_as_mentor",
+      description: "Зарегестрироваться как ментор / Ментор ретінде тіркелу",
     },
     {
       command: "language",
-      description: "language",
+      description: "Выбрать язык / Тілді өзгерту",
     },
   ])
   .then(() => {
@@ -59,6 +60,7 @@ bot.use(setupSession());
 bot.use(setupMiddlewareContext());
 bot.use(setupLogger());
 bot.use(setupI18n());
+bot.use(setDefaultLanguage());
 
 // Features
 

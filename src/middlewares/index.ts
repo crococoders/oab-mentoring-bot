@@ -1,4 +1,4 @@
-export { middleware as registerUser } from "./register-user.middleware";
+export { middleware as setDefaultLanguage } from "./set-default-language";
 export { middleware as setupMiddlewareContext } from "./setup-middleware-context.middleware";
 export { middleware as setupI18n } from "./setup-i18n.middleware";
 export { middleware as setupLogger } from "./setup-logger.middleware";
