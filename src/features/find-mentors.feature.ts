@@ -85,6 +85,8 @@ feature.wait().on("message:text", async (ctx) => {
   }
 });
 
+feature.use(mentorsListActionsKeyboard);
+
 const handler = async (ctx: SceneFlavoredContext<Context, SessionState>) => {
   if (!ctx.scene.session.mentors || ctx.scene.session.mentors.length === 0) {
     const mentors = await getMentors(ctx.scene.session.user);
@@ -141,7 +143,7 @@ feature.do(handler);
 feature.wait().on("callback_query:data", async (ctx) => {
   await ctx.answerCallbackQuery();
   console.log("Received action", ctx.callbackQuery.data);
-  if (ctx.callbackQuery.data === "found") {
+  if (ctx.callbackQuery.data.includes("found")) {
     await ctx.reply(ctx.t("mentors_finding_confirmed"));
     await removeFromWaitList(ctx.scene.session.userId);
     ctx.scene.exit();
