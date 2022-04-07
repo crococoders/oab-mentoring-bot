@@ -9,6 +9,7 @@ import {
 } from "@bot/services/waitList.service";
 import { logger } from "@bot/logger";
 import { Type } from "@prisma/client";
+import { compose } from "@bot/helpers/type-operations";
 
 const logContext = {
   caller: "findMentors.feature",
@@ -25,17 +26,18 @@ export const feature = new Scene<BotContext, FindMentorsSession>(
   "find_mentors"
 );
 
-const isUserInSession = false;
-
 feature.use((ctx, next) => {
   logger.info({
     msg: "entering scene",
     ...logContext,
   });
 
-  if (!isUserInSession) {
+  if (!ctx.session.user) {
     ctx.scene.call("fill_profile", Type.MENTEE);
+  } else {
+    ctx.session.user.type = compose(ctx.session.user.type, Type.MENTEE);
   }
+
   ctx.scene.session = {
     mentors: [],
     mentorsPage: 1,
@@ -46,11 +48,27 @@ feature.use((ctx, next) => {
 
 feature.do(async (ctx, next) => {
   try {
-    const user = ctx.scene.arg;
-    console.log("Saving user", user);
+    let user;
+    if (ctx.scene.arg) {
+      logger.info({
+        msg: "user comes from arg",
+        user: ctx.scene.arg,
+        ...logContext,
+      });
+      user = ctx.scene.arg;
+    } else {
+      logger.info({
+        msg: "user comes from session",
+        user: ctx.session.user,
+        ...logContext,
+      });
+      user = ctx.session.user;
+    }
+
     const savedUser = await saveUser(user);
     ctx.scene.session.user = user;
     ctx.scene.session.userId = savedUser.id;
+    ctx.session.user = savedUser;
     return next();
   } catch (e) {
     console.error(e);
@@ -111,6 +129,7 @@ const displayMentorsList = async (
       console.error(e);
       // @TODO: Нужно поменять текст
       await ctx.reply(ctx.t("register_as_mentor_fail"));
+    } finally {
       ctx.scene.exit();
     }
   }

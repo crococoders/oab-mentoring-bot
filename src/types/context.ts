@@ -3,7 +3,6 @@ import { FluentContextFlavor } from "@grammyjs/fluent";
 import { ParseModeContext } from "parse-mode";
 import { Availability, User } from "@prisma/client";
 import { ScenesFlavor, ScenesSessionFlavor } from "grammy-scenes";
-import { User as UserDTO } from "./user";
 
 interface UserFlavor {
   user?: User;
@@ -21,7 +20,7 @@ export type BotContext = DefaultContext &
   FluentContextFlavor &
   ParseModeContext &
   SessionFlavor<
-    ScenesSessionFlavor & LanguageFlavor & UserDTO & AvailabilityFlavor
+    ScenesSessionFlavor & LanguageFlavor & UserFlavor & AvailabilityFlavor
   > &
   UserFlavor &
   ScenesFlavor;

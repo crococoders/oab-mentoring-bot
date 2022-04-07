@@ -7,8 +7,9 @@ const storage = new RedisAdapter({
   instance: new Redis(config.REDIS_URL),
 });
 
-export const middleware = () =>
-  session({
+export const middleware = () => {
+  return session({
     initial: () => ({}),
     storage,
   });
+};

@@ -24,7 +24,7 @@ filteredComposer.command("stats", async (ctx) => {
 
   await ctx.replyWithChatAction("typing");
 
-  const totalUsersCount = await usersService.getTotalCount();
+  const totalUsersCount = 1;
 
   const stats = `Users count: ${totalUsersCount}`;
 

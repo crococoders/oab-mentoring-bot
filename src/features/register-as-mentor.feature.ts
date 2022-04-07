@@ -4,6 +4,7 @@ import { Availability, Type } from "@prisma/client";
 import { saveUser } from "@bot/services/users.service";
 import { getWaitingMentees } from "@bot/services/waitList.service";
 import { logger } from "@bot/logger";
+import { compose } from "@bot/helpers/type-operations";
 
 export const feature = new Scene<BotContext>("register_as_mentor");
 
@@ -11,34 +12,48 @@ const logContext = {
   caller: "register_as_mentor.feature",
 };
 
-const isUserInSession = false;
-
 feature.use((ctx, next) => {
   logger.info({
     msg: "entering scene",
     ...logContext,
   });
 
-  if (!isUserInSession) {
+  if (!ctx.session.user) {
     ctx.scene.call("fill_profile", Type.MENTOR);
+  } else {
+    ctx.session.user.type = compose(ctx.session.user.type, Type.MENTOR);
   }
 
   return next();
 });
 
 feature.do(async (ctx) => {
-  logger.info({
-    msg: "received argument",
-    arg: ctx.scene.arg,
-    ...logContext,
-  });
-
-  const user = { ...ctx.scene.arg, availability: Availability.AVAILABLE };
+  let user;
+  if (ctx.scene.arg) {
+    logger.info({
+      msg: "user comes from arg",
+      user: ctx.scene.arg,
+      ...logContext,
+    });
+    user = { ...ctx.scene.arg, availability: Availability.AVAILABLE };
+    // user = ctx.scene.arg;
+  } else {
+    logger.info({
+      msg: "user comes from session",
+      user: ctx.session.user,
+      ...logContext,
+    });
+    user = { ...ctx.session.user, availability: Availability.AVAILABLE };
+    // user = ctx.session.user;
+  }
   try {
     const mentor = await saveUser(user);
+    // Не забываем обновить юзера в кэше
     ctx.session.availability = Availability.AVAILABLE;
-
-    await ctx.reply(`👤 ${user.name}\nОпыт: ${user.yearsOfExperience} года`);
+    ctx.session.user = mentor;
+    await ctx.reply(
+      `👤 ${mentor.name}\nОпыт: ${mentor.yearsOfExperience} года`
+    );
     await ctx.reply(ctx.t("mentors_finding_confirmed"));
     const mentees = await getWaitingMentees(mentor);
     mentees.forEach(async (mentee) => {

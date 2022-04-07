@@ -11,6 +11,7 @@ import {
   setupLogger,
   setupI18n,
   setDefaultLanguage,
+  setUserSession,
 } from "@bot/middlewares";
 import { start, scenes, languageSelect, setAvailability } from "@bot/features";
 import { isMultipleLocales } from "@bot/helpers/i18n";
@@ -61,6 +62,7 @@ bot.use(setupMiddlewareContext());
 bot.use(setupLogger());
 bot.use(setupI18n());
 bot.use(setDefaultLanguage());
+bot.use(setUserSession());
 
 // Features
 

@@ -26,9 +26,23 @@ export const updateAvailability = async (
   });
 };
 
+export const getUserIfAny = async (telegramId: string) => {
+  logger.debug({
+    msg: "getUserIfAny",
+    ...logMeta,
+  });
+
+  return prisma.user.findFirst({
+    where: {
+      telegramId,
+    },
+  });
+};
+
 export const saveUser = async (userDTO: User) => {
   logger.debug({
-    msg: "save user",
+    msg: "saveUser",
+    user: userDTO,
     ...logMeta,
   });
 
@@ -112,13 +126,4 @@ export const updateByTelegramId = async (
       languageCode,
     },
   });
-};
-
-export const getTotalCount = async () => {
-  logger.debug({
-    msg: "get total users count",
-    ...logMeta,
-  });
-
-  return prisma.user.count();
 };
