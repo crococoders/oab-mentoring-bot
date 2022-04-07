@@ -1,7 +1,7 @@
 import { logger } from "@bot/logger";
 import { prisma } from "@bot/prisma";
 import { User } from "@bot/types/user";
-import { Availability, Type } from "@prisma/client";
+import { Availability, Type, VerificationStatus } from "@prisma/client";
 
 const logMeta = {
   caller: "users.service",
@@ -26,9 +26,9 @@ export const updateAvailability = async (
   });
 };
 
-export const getUserIfAny = async (telegramId: string) => {
+export const findUser = async (telegramId: string) => {
   logger.debug({
-    msg: "getUserIfAny",
+    msg: "findUser",
     ...logMeta,
   });
 
@@ -91,6 +91,14 @@ export const getMentors = async (user: User) => {
         },
         {
           type: Type.BOTH,
+        },
+      ],
+      AND: [
+        {
+          verificationStatus: VerificationStatus.APPROVED,
+        },
+        {
+          availability: Availability.AVAILABLE,
         },
       ],
       specialization: user.specialization,
