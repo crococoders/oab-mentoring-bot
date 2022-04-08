@@ -8,8 +8,6 @@ services:
       - docker-compose.prod.postgres.env
 
   bot:
-    ports:
-      - "8080:8080"
     env_file:
       - docker-compose.prod.bot.env
       

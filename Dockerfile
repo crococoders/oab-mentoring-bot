@@ -36,5 +36,5 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y procps openssl
 
 # Start the app
-EXPOSE 80
+EXPOSE 8080
 CMD ["node", "dist/run.js"]
