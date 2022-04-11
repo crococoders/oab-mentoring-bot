@@ -15,8 +15,11 @@ services:
     restart: always
     build:
         context: ./nginx
-    ports:
-        - "80:80"
+    ports : 
+     - “80:80” 
+     - “443:443”
+    volumes: 
+     - /etc/letsencrypt/live/oabmentor.com:/etc/nginx/certificates
     depends_on:
       - bot
 
