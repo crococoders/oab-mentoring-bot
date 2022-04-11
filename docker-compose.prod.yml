@@ -18,8 +18,8 @@ services:
     ports : 
      - "80:80" 
      - "443:443"
-    volumes: 
-     - /etc/letsencrypt/live/oabmentor.com:/etc/nginx/certificates
+    volumes:
+      - ../etc/letsencrypt/live/oabmentor.com:/etc/nginx/certificates
     depends_on:
       - bot
 
