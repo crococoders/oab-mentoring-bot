@@ -36,6 +36,10 @@ server.setErrorHandler(async (error, request, response) => {
 
 server.post(`/${config.BOT_TOKEN}`, webhookCallback(bot, "fastify"));
 
+server.get("/healthcheck", async (req, res) => {
+  res.status(200).send({ status: "ok" });
+});
+
 server.get("/metrics", async (req, res) => {
   try {
     res.header("Content-Type", register.contentType);
