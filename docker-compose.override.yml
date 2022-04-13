@@ -15,15 +15,14 @@ services:
 
   bot:
     ports:
-      - "3000:80"
+      - "8080:8080"
     volumes:
       - ".:/usr/src"
     env_file:
       - docker-compose.dev.bot.env
     command: npm run dev
 
-  prisma-studio:
-    container_name: prisma-studio
+  admin-studio:
     image: timothyjmiller/prisma-studio:latest
     restart: unless-stopped
     env_file:

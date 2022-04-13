@@ -13,5 +13,15 @@ services:
     env_file:
       - docker-compose.prod.bot.env
 
+  admin:
+    image: timothyjmiller/prisma-studio:latest
+    restart: unless-stopped
+    env_file:
+      - docker-compose.prod.postgres.env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - postgres
+
 volumes:
   postgres-data:
