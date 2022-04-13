@@ -10,18 +10,6 @@ services:
   bot:
     env_file:
       - docker-compose.prod.bot.env
-      
-  nginx:
-    restart: always
-    build:
-        context: ./nginx
-    ports : 
-     - "80:80" 
-     - "443:443"
-    volumes:
-      - ../etc/letsencrypt/live/oabmentor.com:/etc/nginx/certificates
-    depends_on:
-      - bot
 
 volumes:
   postgres-data:
