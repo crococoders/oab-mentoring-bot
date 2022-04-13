@@ -42,7 +42,7 @@ server.get("/healthcheck", async (req, res) => {
   res.status(200).send({ status: "okeda" });
 });
 
-server.post(`/${config.BOT_TOKEN}`, webhookCallback(bot, "fastify"));
+server.post(`/${config.BOT_TOKEN}`, webhookCallback(bot, "express"));
 
 server.get("/metrics", async (req, res) => {
   try {
