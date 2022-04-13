@@ -17,7 +17,7 @@ const run = async () => {
   await loadLocales();
 
   if (config.isProd) {
-    server.listen(config.BOT_SERVER_PORT, "0.0.0.0", () => {
+    server.listen(config.BOT_SERVER_PORT, () => {
       bot.api
         .setWebhook(config.BOT_WEBHOOK, {
           allowed_updates: config.BOT_ALLOWED_UPDATES,

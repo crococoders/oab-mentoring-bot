@@ -1,4 +1,4 @@
-import fastify from "fastify";
+import express from "express";
 import gracefulShutdown from "fastify-graceful-shutdown";
 import { BotError, webhookCallback } from "grammy";
 import { register } from "prom-client";
@@ -9,11 +9,15 @@ import { logger } from "@bot/logger";
 import { handleError } from "@bot/helpers/error-handler";
 // import { handleGracefulShutdown } from "@bot/helpers/graceful-shutdown-handler";
 
-export const server = fastify({
-  logger,
-});
+// export const app = express();
 
-server.register(gracefulShutdown);
+export const server = express();
+
+// export const server = fastify({
+//   logger,
+// });
+
+// server.register(gracefulShutdown);
 
 // server.after(() => {
 //   server.gracefulShutdown(async (signal, next) => {
@@ -22,23 +26,23 @@ server.register(gracefulShutdown);
 //   });
 // });
 
-server.setErrorHandler(async (error, request, response) => {
-  if (error instanceof BotError) {
-    await handleError(error);
+// server.setErrorHandler(async (error, request, response) => {
+//   if (error instanceof BotError) {
+//     await handleError(error);
 
-    response.code(200).send({});
-  } else {
-    logger.error(error);
+//     response.code(200).send({});
+//   } else {
+//     logger.error(error);
 
-    response.status(500).send({ error: "Something went wrong" });
-  }
+//     response.status(500).send({ error: "Something went wrong" });
+//   }
+// });
+
+server.get("/healthcheck", async (req, res) => {
+  res.status(200).send({ status: "okeda" });
 });
 
 server.post(`/${config.BOT_TOKEN}`, webhookCallback(bot, "fastify"));
-
-server.get("/healthcheck", async (req, res) => {
-  res.status(200).send({ status: "ok" });
-});
 
 server.get("/metrics", async (req, res) => {
   try {
